@@ -10,7 +10,7 @@ import {
   useDeactivateUser,
   useAllUsers,
 } from "@/services/authService";
-import { User, UserRole } from "@/types";
+import { getRoleColor, getRoleLabel, User, UserRole } from "@/types";
 import { toast } from "react-toastify";
 import {
   UserCheck,
@@ -30,17 +30,13 @@ export default function AcademicCouncilActivationPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<string>("pending");
+  const excludedRoles = [UserRole.SUPER_ADMIN, UserRole.ACADEMIC_ADVISOR];
 
-  // Получение данных
   const { data: pendingUsers = [], isLoading: pendingLoading } =
     usePendingUsers();
   const { data: allUsers = [], isLoading: allLoading } = useAllUsers();
-
-  // Мутации
   const activateMutation = useActivateUser();
   const deactivateMutation = useDeactivateUser();
-
-  // Фильтрация пользователей
   const filteredUsers = React.useMemo(() => {
     let users: User[] = [];
 
@@ -55,8 +51,11 @@ export default function AcademicCouncilActivationPage() {
     }
 
     return users.filter((user) => {
-      // Исключаем Супер админов из управления
-      if (user.role === UserRole.SUPER_ADMIN) return false;
+      if (
+        user.role === UserRole.SUPER_ADMIN ||
+        user.role === UserRole.ACADEMIC_ADVISOR
+      )
+        return false;
 
       const matchesSearch =
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -96,32 +95,6 @@ export default function AcademicCouncilActivationPage() {
     }
   };
 
-  const getRoleLabel = (role: UserRole) => {
-    switch (role) {
-      case UserRole.ACADEMIC_ADVISOR:
-        return "Академ советник";
-      case UserRole.TEACHER:
-        return "Преподаватель";
-      case UserRole.STUDENT:
-        return "Студент";
-      default:
-        return role;
-    }
-  };
-
-  const getRoleColor = (role: UserRole) => {
-    switch (role) {
-      case UserRole.ACADEMIC_ADVISOR:
-        return "bg-blue-100 text-blue-800";
-      case UserRole.TEACHER:
-        return "bg-green-100 text-green-800";
-      case UserRole.STUDENT:
-        return "bg-purple-100 text-purple-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
   const getStatusIcon = (isActive: boolean) => {
     return isActive ? (
       <CheckCircle className="h-5 w-5 text-green-500" />
@@ -141,12 +114,13 @@ export default function AcademicCouncilActivationPage() {
   // Статистика
   const stats = React.useMemo(() => {
     const nonSuperAdminUsers = allUsers.filter(
-      (u) => u.role !== UserRole.SUPER_ADMIN
+      (u) => !excludedRoles.includes(u.role)
     );
 
     return {
       total: nonSuperAdminUsers.length,
-      pending: pendingUsers.length,
+      pending: pendingUsers.filter((u) => u.role !== UserRole.ACADEMIC_ADVISOR)
+        .length,
       active: nonSuperAdminUsers.filter((u) => u.isActive).length,
       inactive: nonSuperAdminUsers.filter((u) => !u.isActive).length,
     };
@@ -277,9 +251,6 @@ export default function AcademicCouncilActivationPage() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="all">Все роли</option>
-              <option value={UserRole.ACADEMIC_ADVISOR}>
-                Академ Cоветники
-              </option>
               <option value={UserRole.TEACHER}>Преподаватели</option>
               <option value={UserRole.STUDENT}>Студенты</option>
             </select>
