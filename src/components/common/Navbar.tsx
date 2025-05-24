@@ -1,4 +1,4 @@
-// src/components/common/Navbar.tsx
+// src/components/common/Navbar.tsx - ОБНОВЛЕННАЯ ВЕРСИЯ с группами
 
 "use client";
 
@@ -22,6 +22,7 @@ import {
   ClipboardList,
   Menu,
   X,
+  UsersIcon,
 } from "lucide-react";
 
 export function Navbar() {
@@ -88,6 +89,11 @@ export function Navbar() {
             icon: GraduationCap,
           },
           {
+            href: "/academic-advisor/groups",
+            label: "Группы",
+            icon: UsersIcon,
+          },
+          {
             href: "/academic-advisor/assignments",
             label: "Назначения",
             icon: FileText,
@@ -106,6 +112,16 @@ export function Navbar() {
             href: "/academic-advisor/attendance",
             label: "Посещаемость",
             icon: Calendar,
+          },
+          {
+            href: "/academic-advisor/survey-results",
+            label: "Опросы",
+            icon: ClipboardList,
+          },
+          {
+            href: "/academic-advisor/reports",
+            label: "Отчеты",
+            icon: FileText,
           },
         ];
 

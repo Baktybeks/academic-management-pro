@@ -3,18 +3,7 @@
 import { ID, Query } from "appwrite";
 import { databases } from "./appwriteClient";
 import { appwriteConfig } from "@/constants/appwriteConfig";
-import { Group } from "@/types";
-
-export interface GroupCreateDto {
-  title: string;
-  studentIds?: string[];
-  createdBy: string;
-}
-
-export interface GroupUpdateDto {
-  title?: string;
-  studentIds?: string[];
-}
+import { Group, CreateGroupDto, UpdateGroupDto } from "@/types";
 
 export const groupApi = {
   getAllGroups: async (): Promise<Group[]> => {
@@ -74,7 +63,7 @@ export const groupApi = {
   },
 
   // Создать группу
-  createGroup: async (data: GroupCreateDto): Promise<Group> => {
+  createGroup: async (data: CreateGroupDto): Promise<Group> => {
     try {
       const response = await databases.createDocument(
         appwriteConfig.databaseId,
@@ -95,7 +84,7 @@ export const groupApi = {
   },
 
   // Обновить группу
-  updateGroup: async (id: string, data: GroupUpdateDto): Promise<Group> => {
+  updateGroup: async (id: string, data: UpdateGroupDto): Promise<Group> => {
     try {
       const response = await databases.updateDocument(
         appwriteConfig.databaseId,

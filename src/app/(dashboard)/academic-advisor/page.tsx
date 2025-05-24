@@ -1,3 +1,5 @@
+// src/app/(dashboard)/academic-advisor/page.tsx - ОБНОВЛЕННАЯ ВЕРСИЯ
+
 "use client";
 
 import React from "react";
@@ -29,6 +31,8 @@ import {
   Clock,
   Target,
   CheckCircle,
+  FileText,
+  UsersIcon,
 } from "lucide-react";
 
 export default function AcademicCouncilDashboard() {
@@ -64,6 +68,7 @@ export default function AcademicCouncilDashboard() {
     activeStudents: students.filter((s) => s.isActive).length,
     totalStudents: students.length,
     totalAssignments: assignments.length,
+    totalGroups: groups.length,
     pendingActivations: pendingUsers.filter((u) => u.role !== "SUPER_ADMIN")
       .length,
     studentsInGroups: groups.reduce(
@@ -97,6 +102,15 @@ export default function AcademicCouncilDashboard() {
       color: "bg-green-500 hover:bg-green-600",
       count: stats.activeStudents,
       subtext: `из ${stats.totalStudents} всего`,
+    },
+    {
+      title: "Группы",
+      description: "Создание групп и добавление в них студентов",
+      href: "/academic-advisor/groups",
+      icon: UsersIcon,
+      color: "bg-teal-500 hover:bg-teal-600",
+      count: stats.totalGroups,
+      subtext: `${stats.studentsInGroups} студентов в группах`,
     },
     {
       title: "Назначения преподавателей",
@@ -143,8 +157,8 @@ export default function AcademicCouncilDashboard() {
       title: "Отчеты",
       description: "Общие отчеты и аналитика",
       href: "/academic-advisor/reports",
-      icon: BarChart3,
-      color: "bg-teal-500 hover:bg-teal-600",
+      icon: FileText,
+      color: "bg-gray-500 hover:bg-gray-600",
     },
   ];
 
@@ -178,12 +192,12 @@ export default function AcademicCouncilDashboard() {
     },
     {
       id: 4,
-      action: "Создан преподаватель",
-      target: "Козлов К.К.",
+      action: "Создана группа",
+      target: "ИТ-21-3",
       time: "2 дня назад",
-      type: "teacher",
-      icon: Users,
-      color: "text-indigo-600",
+      type: "group",
+      icon: UsersIcon,
+      color: "text-teal-600",
     },
   ];
 
@@ -191,10 +205,11 @@ export default function AcademicCouncilDashboard() {
     <div className="p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Панель aкадем советника
+          Панель академ советника
         </h1>
         <p className="text-gray-600">
-          Управление пользователями, назначениями и мониторинг учебного процесса
+          Управление пользователями, группами, назначениями и мониторинг
+          учебного процесса
         </p>
       </div>
 
@@ -241,16 +256,16 @@ export default function AcademicCouncilDashboard() {
         <div className="bg-white p-6 rounded-lg shadow border">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <UserCheck className="h-8 w-8 text-orange-500" />
+              <UsersIcon className="h-8 w-8 text-teal-500" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">
-                Ожидают активации
-              </p>
+              <p className="text-sm font-medium text-gray-600">Групп создано</p>
               <p className="text-2xl font-bold text-gray-900">
-                {stats.pendingActivations}
+                {stats.totalGroups}
               </p>
-              <p className="text-xs text-gray-500">Новых пользователей</p>
+              <p className="text-xs text-gray-500">
+                {stats.studentsInGroups} студентов в группах
+              </p>
             </div>
           </div>
         </div>
@@ -274,7 +289,7 @@ export default function AcademicCouncilDashboard() {
       </div>
 
       {/* Быстрые действия */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {menuItems.map((item) => (
           <Link
             key={item.href}
@@ -345,7 +360,7 @@ export default function AcademicCouncilDashboard() {
               </div>
             )}
 
-            {stats.emptyGroups > 0 && (
+            {stats.totalStudents - stats.studentsInGroups > 0 && (
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                 <div className="flex items-center">
                   <GraduationCap className="h-5 w-5 text-green-600 mr-3" />
@@ -362,8 +377,25 @@ export default function AcademicCouncilDashboard() {
               </div>
             )}
 
+            {stats.emptyGroups > 0 && (
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                <div className="flex items-center">
+                  <UsersIcon className="h-5 w-5 text-orange-600 mr-3" />
+                  <div>
+                    <h3 className="text-sm font-medium text-orange-800">
+                      Пустые группы
+                    </h3>
+                    <p className="text-sm text-orange-700">
+                      {stats.emptyGroups} групп без студентов
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {stats.pendingActivations === 0 &&
               stats.unassignedTeachers === 0 &&
+              stats.totalStudents === stats.studentsInGroups &&
               stats.emptyGroups === 0 && (
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                   <div className="flex items-center">
@@ -509,7 +541,7 @@ export default function AcademicCouncilDashboard() {
 
           <div className="bg-white p-6 rounded-lg shadow border">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Распределение студентов
+              Организация студентов
             </h3>
             <div className="space-y-3">
               <div className="flex justify-between">
@@ -551,21 +583,25 @@ export default function AcademicCouncilDashboard() {
                   пользователей
                 </li>
               )}
-              {stats.unassignedTeachers > 0 && (
-                <li>
-                  • Создать назначения для {stats.unassignedTeachers}{" "}
-                  преподавателей
-                </li>
-              )}
               {stats.totalStudents - stats.studentsInGroups > 0 && (
                 <li>
                   • Добавить {stats.totalStudents - stats.studentsInGroups}{" "}
                   студентов в группы
                 </li>
               )}
+              {stats.unassignedTeachers > 0 && (
+                <li>
+                  • Создать назначения для {stats.unassignedTeachers}{" "}
+                  преподавателей
+                </li>
+              )}
+              {stats.emptyGroups > 0 && (
+                <li>• Заполнить {stats.emptyGroups} пустых групп</li>
+              )}
               {stats.pendingActivations === 0 &&
                 stats.unassignedTeachers === 0 &&
-                stats.totalStudents === stats.studentsInGroups && (
+                stats.totalStudents === stats.studentsInGroups &&
+                stats.emptyGroups === 0 && (
                   <li>• Все основные задачи выполнены!</li>
                 )}
             </ul>
@@ -579,6 +615,7 @@ export default function AcademicCouncilDashboard() {
               <li>• Планировать назначения на семестр заранее</li>
               <li>• Мониторить активность преподавателей</li>
               <li>• Анализировать результаты опросов студентов</li>
+              <li>• Следить за заполненностью групп</li>
             </ul>
           </div>
         </div>

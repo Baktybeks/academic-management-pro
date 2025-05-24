@@ -181,6 +181,7 @@ export interface UpdateSubjectDto {
 export interface CreateGroupDto {
   title: string;
   studentIds?: string[];
+  createdBy: string;
 }
 
 export interface UpdateGroupDto {
