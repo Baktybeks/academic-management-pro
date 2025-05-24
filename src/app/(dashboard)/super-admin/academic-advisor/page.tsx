@@ -216,7 +216,7 @@ export default function SuperAdminAcademicCouncilPage() {
             className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
           >
             <Plus className="h-4 w-4" />
-            Создать академсоветника
+            Создать академ советника
           </button>
         </div>
       </div>

@@ -21,6 +21,8 @@ import {
   ArrowUp,
   ArrowDown,
   X,
+  Save,
+  RotateCcw,
 } from "lucide-react";
 
 export default function SuperAdminSurveysPage() {
@@ -30,6 +32,7 @@ export default function SuperAdminSurveysPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingSurvey, setEditingSurvey] = useState<Survey | null>(null);
   const [viewingQuestions, setViewingQuestions] = useState<Survey | null>(null);
+  const [editingQuestions, setEditingQuestions] = useState<Survey | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
 
@@ -39,11 +42,17 @@ export default function SuperAdminSurveysPage() {
     queryFn: surveyApi.getAllSurveys,
   });
 
-  // Получение вопросов для просмотра
-  const { data: surveyQuestions = [] } = useQuery({
-    queryKey: ["survey-questions", viewingQuestions?.$id],
-    queryFn: () => surveyApi.getQuestionsBySurveyId(viewingQuestions!.$id),
-    enabled: !!viewingQuestions,
+  // Получение вопросов для просмотра/редактирования
+  const { data: surveyQuestions = [], refetch: refetchQuestions } = useQuery({
+    queryKey: [
+      "survey-questions",
+      viewingQuestions?.$id || editingQuestions?.$id,
+    ],
+    queryFn: () =>
+      surveyApi.getQuestionsBySurveyId(
+        (viewingQuestions || editingQuestions)!.$id
+      ),
+    enabled: !!(viewingQuestions || editingQuestions),
   });
 
   // Создание опросника
@@ -59,6 +68,7 @@ export default function SuperAdminSurveysPage() {
         await surveyApi.createQuestion({
           surveyId: survey.$id,
           text: data.questions[i],
+          order: i + 1,
         });
       }
 
@@ -90,6 +100,56 @@ export default function SuperAdminSurveysPage() {
     },
     onError: (error) => {
       toast.error(`Ошибка при обновлении опросника: ${error.message}`);
+    },
+  });
+
+  // Создание вопроса
+  const createQuestionMutation = useMutation({
+    mutationFn: (data: { surveyId: string; text: string; order: number }) =>
+      surveyApi.createQuestion(data),
+    onSuccess: () => {
+      refetchQuestions();
+      toast.success("Вопрос добавлен");
+    },
+    onError: (error) => {
+      toast.error(`Ошибка при добавлении вопроса: ${error.message}`);
+    },
+  });
+
+  // Обновление вопроса
+  const updateQuestionMutation = useMutation({
+    mutationFn: ({ id, text }: { id: string; text: string }) =>
+      surveyApi.updateQuestion(id, { text }),
+    onSuccess: () => {
+      refetchQuestions();
+      toast.success("Вопрос обновлен");
+    },
+    onError: (error) => {
+      toast.error(`Ошибка при обновлении вопроса: ${error.message}`);
+    },
+  });
+
+  // Удаление вопроса
+  const deleteQuestionMutation = useMutation({
+    mutationFn: surveyApi.deleteQuestion,
+    onSuccess: () => {
+      refetchQuestions();
+      toast.success("Вопрос удален");
+    },
+    onError: (error) => {
+      toast.error(`Ошибка при удалении вопроса: ${error.message}`);
+    },
+  });
+
+  // Изменение порядка вопросов
+  const reorderQuestionsMutation = useMutation({
+    mutationFn: surveyApi.reorderQuestions,
+    onSuccess: () => {
+      refetchQuestions();
+      toast.success("Порядок вопросов обновлен");
+    },
+    onError: (error) => {
+      toast.error(`Ошибка при изменении порядка: ${error.message}`);
     },
   });
 
@@ -328,7 +388,7 @@ export default function SuperAdminSurveysPage() {
 
                 <div className="text-xs text-gray-500 mb-4">
                   Создан:{" "}
-                  {new Date(survey.createdAt).toLocaleDateString("ru-RU")}
+                  {new Date(survey.$createdAt).toLocaleDateString("ru-RU")}
                 </div>
 
                 <div className="flex gap-2 flex-wrap">
@@ -345,6 +405,14 @@ export default function SuperAdminSurveysPage() {
                     className="flex items-center gap-1 px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors"
                   >
                     <List className="h-3 w-3" />
+                    Просмотр
+                  </button>
+
+                  <button
+                    onClick={() => setEditingQuestions(survey)}
+                    className="flex items-center gap-1 px-3 py-1 text-sm bg-orange-100 text-orange-700 rounded hover:bg-orange-200 transition-colors"
+                  >
+                    <MessageSquare className="h-3 w-3" />
                     Вопросы
                   </button>
 
@@ -515,6 +583,25 @@ export default function SuperAdminSurveysPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Модальное окно редактирования вопросов */}
+      {editingQuestions && (
+        <EditQuestionsModal
+          survey={editingQuestions}
+          questions={surveyQuestions}
+          onClose={() => setEditingQuestions(null)}
+          onCreateQuestion={createQuestionMutation.mutate}
+          onUpdateQuestion={updateQuestionMutation.mutate}
+          onDeleteQuestion={deleteQuestionMutation.mutate}
+          onReorderQuestions={reorderQuestionsMutation.mutate}
+          isLoading={
+            createQuestionMutation.isPending ||
+            updateQuestionMutation.isPending ||
+            deleteQuestionMutation.isPending ||
+            reorderQuestionsMutation.isPending
+          }
+        />
       )}
     </div>
   );
@@ -701,6 +788,241 @@ function CreateSurveyModal({
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+}
+
+// Компонент для редактирования вопросов
+function EditQuestionsModal({
+  survey,
+  questions,
+  onClose,
+  onCreateQuestion,
+  onUpdateQuestion,
+  onDeleteQuestion,
+  onReorderQuestions,
+  isLoading,
+}: {
+  survey: Survey;
+  questions: SurveyQuestion[];
+  onClose: () => void;
+  onCreateQuestion: (data: {
+    surveyId: string;
+    text: string;
+    order: number;
+  }) => void;
+  onUpdateQuestion: (data: { id: string; text: string }) => void;
+  onDeleteQuestion: (id: string) => void;
+  onReorderQuestions: (questionIds: string[]) => void;
+  isLoading: boolean;
+}) {
+  const [editingQuestionId, setEditingQuestionId] = useState<string | null>(
+    null
+  );
+  const [editingText, setEditingText] = useState("");
+  const [newQuestionText, setNewQuestionText] = useState("");
+
+  const sortedQuestions = questions.sort(
+    (a, b) => (a.order || 0) - (b.order || 0)
+  );
+
+  const handleEditQuestion = (question: SurveyQuestion) => {
+    setEditingQuestionId(question.$id);
+    setEditingText(question.text);
+  };
+
+  const handleSaveQuestion = () => {
+    if (editingQuestionId && editingText.trim()) {
+      onUpdateQuestion({ id: editingQuestionId, text: editingText.trim() });
+      setEditingQuestionId(null);
+      setEditingText("");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingQuestionId(null);
+    setEditingText("");
+  };
+
+  const handleAddQuestion = () => {
+    if (newQuestionText.trim()) {
+      const nextOrder = Math.max(...questions.map((q) => q.order || 0), 0) + 1;
+      onCreateQuestion({
+        surveyId: survey.$id,
+        text: newQuestionText.trim(),
+        order: nextOrder,
+      });
+      setNewQuestionText("");
+    }
+  };
+
+  const handleDeleteQuestion = (questionId: string) => {
+    if (window.confirm("Вы уверены, что хотите удалить этот вопрос?")) {
+      onDeleteQuestion(questionId);
+    }
+  };
+
+  const moveQuestion = (index: number, direction: "up" | "down") => {
+    const newQuestions = [...sortedQuestions];
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+
+    if (targetIndex >= 0 && targetIndex < newQuestions.length) {
+      [newQuestions[index], newQuestions[targetIndex]] = [
+        newQuestions[targetIndex],
+        newQuestions[index],
+      ];
+
+      // Обновляем порядок
+      const reorderedIds = newQuestions.map((q) => q.$id);
+      onReorderQuestions(reorderedIds);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-gray-900">
+              Редактировать вопросы: {survey.title}
+            </h2>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-100 rounded-full"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* Добавление нового вопроса */}
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 className="text-sm font-medium text-blue-800 mb-3">
+              Добавить новый вопрос
+            </h3>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newQuestionText}
+                onChange={(e) => setNewQuestionText(e.target.value)}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="Введите текст нового вопроса"
+                onKeyPress={(e) => e.key === "Enter" && handleAddQuestion()}
+              />
+              <button
+                onClick={handleAddQuestion}
+                disabled={!newQuestionText.trim() || isLoading}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Список вопросов */}
+          {sortedQuestions.length > 0 ? (
+            <div className="space-y-3">
+              {sortedQuestions.map((question, index) => (
+                <div
+                  key={question.$id}
+                  className="p-4 border border-gray-200 rounded-lg"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-8 h-8 bg-indigo-100 text-indigo-800 rounded-full flex items-center justify-center text-sm font-medium">
+                      {index + 1}
+                    </span>
+
+                    <div className="flex-1">
+                      {editingQuestionId === question.$id ? (
+                        <div className="space-y-3">
+                          <textarea
+                            value={editingText}
+                            onChange={(e) => setEditingText(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            rows={2}
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              onClick={handleSaveQuestion}
+                              disabled={!editingText.trim() || isLoading}
+                              className="flex items-center gap-1 px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 disabled:opacity-50 transition-colors"
+                            >
+                              <Save className="h-4 w-4" />
+                              Сохранить
+                            </button>
+                            <button
+                              onClick={handleCancelEdit}
+                              className="flex items-center gap-1 px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                            >
+                              <RotateCcw className="h-4 w-4" />
+                              Отмена
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-gray-900">{question.text}</p>
+                      )}
+                    </div>
+
+                    <div className="flex gap-1">
+                      {editingQuestionId !== question.$id && (
+                        <>
+                          {index > 0 && (
+                            <button
+                              onClick={() => moveQuestion(index, "up")}
+                              disabled={isLoading}
+                              className="p-1 hover:bg-gray-100 rounded disabled:opacity-50"
+                            >
+                              <ArrowUp className="h-4 w-4 text-gray-500" />
+                            </button>
+                          )}
+                          {index < sortedQuestions.length - 1 && (
+                            <button
+                              onClick={() => moveQuestion(index, "down")}
+                              disabled={isLoading}
+                              className="p-1 hover:bg-gray-100 rounded disabled:opacity-50"
+                            >
+                              <ArrowDown className="h-4 w-4 text-gray-500" />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleEditQuestion(question)}
+                            disabled={isLoading}
+                            className="p-1 hover:bg-blue-100 rounded text-blue-600 disabled:opacity-50"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteQuestion(question.$id)}
+                            disabled={isLoading}
+                            className="p-1 hover:bg-red-100 rounded text-red-600 disabled:opacity-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              В этом опроснике пока нет вопросов. Добавьте первый вопрос выше.
+            </div>
+          )}
+
+          {sortedQuestions.length > 0 && (
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-600">
+                <strong>Всего вопросов:</strong> {sortedQuestions.length}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Студенты будут оценивать каждый вопрос по шкале от 0 до 10
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

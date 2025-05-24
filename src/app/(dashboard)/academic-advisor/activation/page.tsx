@@ -277,7 +277,9 @@ export default function AcademicCouncilActivationPage() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="all">Все роли</option>
-              <option value={UserRole.ACADEMIC_ADVISOR}>Академсоветники</option>
+              <option value={UserRole.ACADEMIC_ADVISOR}>
+                Академ Cоветники
+              </option>
               <option value={UserRole.TEACHER}>Преподаватели</option>
               <option value={UserRole.STUDENT}>Студенты</option>
             </select>
@@ -334,7 +336,9 @@ export default function AcademicCouncilActivationPage() {
                         <div className="flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
                           Создан:{" "}
-                          {new Date(user.createdAt).toLocaleDateString("ru-RU")}
+                          {new Date(user.$createdAt).toLocaleDateString(
+                            "ru-RU"
+                          )}
                         </div>
                       </div>
                     </div>

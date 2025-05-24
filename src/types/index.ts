@@ -157,6 +157,7 @@ export interface CreateSubjectDto {
   title: string;
   description?: string;
 }
+
 export interface UpdateSubjectDto {
   title?: string;
   description?: string;
@@ -166,6 +167,7 @@ export interface CreateGroupDto {
   title: string;
   studentIds?: string[];
 }
+
 export interface UpdateGroupDto {
   title?: string;
   studentIds?: string[];
@@ -179,6 +181,7 @@ export interface CreateAssignmentDto {
   dueDate: string;
   maxScore?: number;
 }
+
 export interface UpdateAssignmentDto {
   title?: string;
   description?: string;
@@ -208,6 +211,19 @@ export interface CreateSurveyDto {
   title: string;
   description: string;
   questions: string[];
+}
+
+export interface SurveyCreateDto {
+  title: string;
+  description: string;
+  createdBy: string;
+  isActive?: boolean;
+}
+
+export interface SurveyQuestionCreateDto {
+  surveyId: string;
+  text: string;
+  order?: number;
 }
 
 export interface SubmitSurveyDto {
