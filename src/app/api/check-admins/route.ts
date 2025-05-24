@@ -19,7 +19,7 @@ export async function GET() {
       [Query.equal("role", UserRole.SUPER_ADMIN)]
     );
 
-    // Если нет СуперАдминов, значит это первый пользователь
+    // Если нет Супер админов, значит это первый пользователь
     const isFirstUser = adminCheck.total === 0;
 
     return Response.json({ isFirstUser });

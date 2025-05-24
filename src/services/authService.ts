@@ -89,7 +89,7 @@ export const authApi = {
         name,
         email,
         role: finalRole,
-        isActive: finalRole === UserRole.SUPER_ADMIN ? true : false, // СуперАдмины автоматически активированы
+        isActive: finalRole === UserRole.SUPER_ADMIN ? true : false, // Супер админы автоматически активированы
         createdAt: new Date().toISOString(),
       };
 
@@ -103,7 +103,7 @@ export const authApi = {
       console.log("Пользователь успешно зарегистрирован:", user.$id);
       if (finalRole === UserRole.SUPER_ADMIN) {
         console.log(
-          "Пользователь назначен СуперАдминистратором (первый пользователь в системе)"
+          "Пользователь назначен Супер администратором (первый пользователь в системе)"
         );
       }
       return user as unknown as User;

@@ -347,7 +347,7 @@ export default function SuperAdminSettingsPage() {
                     </label>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    В этом режиме только суперадминистраторы могут войти в
+                    В этом режиме только супер администраторы могут войти в
                     систему
                   </p>
                 </div>

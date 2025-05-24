@@ -249,7 +249,7 @@ export default function SubjectsManagementPage() {
                 {new Date(subject.$createdAt).toLocaleDateString("ru-RU")}
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2 ">
                 <button
                   onClick={() => setEditingSubject(subject)}
                   className="flex items-center gap-1 px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"

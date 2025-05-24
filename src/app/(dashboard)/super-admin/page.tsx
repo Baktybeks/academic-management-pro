@@ -273,7 +273,7 @@ export default function SuperAdminDashboard() {
     <div className="p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Панель Супер Администратора
+          Панель супер администратора
         </h1>
         <p className="text-gray-600">
           Управление академической системой, создание основных сущностей и
@@ -447,10 +447,10 @@ export default function SuperAdminDashboard() {
       <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-blue-900 mb-3">
-            Основные функции СуперАдмина
+            Основные функции Супер админа
           </h3>
           <ul className="space-y-2 text-blue-800">
-            <li>• Создание и управление академсоветниками</li>
+            <li>• Создание и управление академ советниками</li>
             <li>• Создание дисциплин и учебных групп</li>
             <li>• Настройка периодов оценивания</li>
             <li>• Создание опросников для студентов</li>
@@ -468,7 +468,7 @@ export default function SuperAdminDashboard() {
             <li>• Сначала создайте академ советников</li>
             <li>• Затем настройте дисциплины и группы</li>
             <li>• Создайте опросники и периоды опросов</li>
-            <li>• Назначение студентов производится академсоветниками</li>
+            <li>• Назначение студентов производится академ советниками</li>
             <li>• Регулярно проверяйте отчеты системы</li>
             <li>• Создавайте резервные копии данных</li>
             <li>• Мониторьте активность пользователей</li>
@@ -490,7 +490,7 @@ export default function SuperAdminDashboard() {
                 <p className="text-sm text-yellow-700">
                   {
                     users.filter(
-                      (u) => !u.isActive && u.role !== UserRole.SUPER_ADMIN
+                      (u) => !u.isActive && u.role === UserRole.ACADEMIC_ADVISOR
                     ).length
                   }{" "}
                   пользователей ожидают активации.

@@ -14,6 +14,21 @@ export const UserRoleLabels: Record<UserRole, string> = {
   [UserRole.STUDENT]: "Студент",
 };
 
+export const UserRoleColors: Record<UserRole, string> = {
+  [UserRole.SUPER_ADMIN]: "bg-red-100 text-red-800",
+  [UserRole.ACADEMIC_ADVISOR]: "bg-blue-100 text-blue-800",
+  [UserRole.TEACHER]: "bg-green-100 text-green-800",
+  [UserRole.STUDENT]: "bg-purple-100 text-purple-800",
+};
+
+export const getRoleLabel = (role: UserRole): string => {
+  return UserRoleLabels[role] || role;
+};
+
+export const getRoleColor = (role: UserRole): string => {
+  return UserRoleColors[role] || "bg-gray-100 text-gray-800";
+};
+
 export interface BaseDocument {
   $id: string;
   $createdAt: string;

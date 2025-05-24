@@ -55,7 +55,7 @@ export default function AcademicCouncilActivationPage() {
     }
 
     return users.filter((user) => {
-      // Исключаем СуперАдминов из управления
+      // Исключаем Супер админов из управления
       if (user.role === UserRole.SUPER_ADMIN) return false;
 
       const matchesSearch =

@@ -89,7 +89,7 @@ export const surveyPeriodApi = {
     }
   },
 
-  // Создать период опроса (только СуперАдмин)
+  // Создать период опроса (только Супер админ)
   createSurveyPeriod: async (
     data: SurveyPeriodCreateDto,
     createdBy: string

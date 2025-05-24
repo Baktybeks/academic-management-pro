@@ -81,7 +81,7 @@ export const surveyApi = {
     }
   },
 
-  // Создать опросник (только СуперАдмин)
+  // Создать опросник (только Супер админ)
   createSurvey: async (data: SurveyCreateDto): Promise<Survey> => {
     try {
       const response = await databases.createDocument(

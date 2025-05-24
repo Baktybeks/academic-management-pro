@@ -38,7 +38,7 @@ export function middleware(request: NextRequest) {
 
   // Защита маршрутов по ролям
 
-  // СуперАдмин - доступ ко всем маршрутам /super-admin
+  // Супер админ - доступ ко всем маршрутам /super-admin
   if (path.startsWith("/super-admin") && user.role !== UserRole.SUPER_ADMIN) {
     return redirectByRole(user.role, request);
   }

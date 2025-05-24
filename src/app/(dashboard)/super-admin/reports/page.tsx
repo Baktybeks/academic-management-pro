@@ -258,7 +258,7 @@ export default function SuperAdminReportsPage() {
           </h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">СуперАдмины</span>
+              <span className="text-sm text-gray-600">Супер админы</span>
               <div className="flex items-center gap-2">
                 <div className="w-24 bg-gray-200 rounded-full h-2">
                   <div

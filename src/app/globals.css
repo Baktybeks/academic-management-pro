@@ -12,6 +12,7 @@
   --color-indigo-700: #4338ca;
   --color-indigo-800: #3730a3;
   --color-indigo-900: #312e81;
+  --breakpoint-b1400: 1400px;
 }
 
 html,

@@ -70,7 +70,7 @@ export const gradingPeriodApi = {
     }
   },
 
-  // Создать период оценок (только СуперАдмин)
+  // Создать период оценок (только Супер админ)
   createGradingPeriod: async (
     data: GradingPeriodCreateDto,
     createdBy: string

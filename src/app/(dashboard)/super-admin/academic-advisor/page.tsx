@@ -124,10 +124,10 @@ export default function SuperAdminAcademicCouncilPage() {
     <div className="p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Управление академсоветниками
+          Управление академ советниками
         </h1>
         <p className="text-gray-600">
-          Создание и управление академсоветниками системы
+          Создание и управление академ советниками системы
         </p>
       </div>
 
@@ -410,34 +410,13 @@ export default function SuperAdminAcademicCouncilPage() {
           </div>
         </div>
       )}
-
-      {/* Информационные блоки */}
       <div className="mt-6 space-y-4">
-        {/* Информация для неактивированных академ советников */}
-        {academicCouncilMembers.filter((m) => !m.isActive).length > 0 && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <div className="flex items-center">
-              <UserX className="h-5 w-5 text-yellow-600 mr-3" />
-              <div>
-                <h3 className="text-sm font-medium text-yellow-800">
-                  Неактивированные академ советники
-                </h3>
-                <p className="text-sm text-yellow-700">
-                  {academicCouncilMembers.filter((m) => !m.isActive).length}{" "}
-                  академ советников ожидают активации.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Рекомендации */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex items-start">
             <Shield className="h-5 w-5 text-blue-600 mr-3 mt-0.5" />
             <div>
               <h3 className="text-sm font-medium text-blue-800 mb-2">
-                Рекомендации по управлению академсоветниками
+                Рекомендации по управлению академ советниками
               </h3>
               <div className="text-sm text-blue-700 space-y-1">
                 <p>• Создавайте академ советников только для доверенных лиц</p>

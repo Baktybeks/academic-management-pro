@@ -51,7 +51,7 @@ export const subjectApi = {
     }
   },
 
-  // Создать дисциплину (только СуперАдмин)
+  // Создать дисциплину (только Супер админ)
   createSubject: async (
     data: CreateSubjectDto,
     createdBy: string

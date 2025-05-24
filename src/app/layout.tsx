@@ -1,11 +1,10 @@
-// app/layout.tsx
 import "./globals.css";
 import { Providers } from "./providers";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Ваше приложение",
-  description: "Описание вашего приложения",
+  title: "BAMORA",
+  description: "Платформа для управления академической деятельностью",
 };
 
 export default function RootLayout({
