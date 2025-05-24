@@ -41,17 +41,12 @@ export const appwriteHelpers = {
   // Проверка подключения к Appwrite
   checkHealth: async () => {
     try {
-      // For SDK v17+, use account.get() for health check
-      // This checks connection and authentication status
       await account.get();
       return true;
     } catch (error: unknown) {
-      // If user is not authenticated, we can still check basic connectivity
       const appwriteError = error as any;
       if (appwriteError.code === 401) {
         try {
-          // Try to make a basic API call that doesn't require auth
-          // Using the client's call method to ping the health endpoint
           await (client as any).call("GET", "/health");
           return true;
         } catch (healthError: unknown) {

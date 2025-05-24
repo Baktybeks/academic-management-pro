@@ -21,6 +21,11 @@ import {
   X,
   Check,
   AlertTriangle,
+  CheckSquare,
+  Square,
+  ArrowLeft,
+  Save,
+  RefreshCw,
 } from "lucide-react";
 
 export default function AcademicAdvisorGroupsPage() {
@@ -29,9 +34,16 @@ export default function AcademicAdvisorGroupsPage() {
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [viewMode, setViewMode] = useState<"list" | "manage">("list");
+
+  // Состояние для управления студентами
+  const [studentSearchTerm, setStudentSearchTerm] = useState("");
+  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
+  const [filterStatus, setFilterStatus] = useState<
+    "all" | "assigned" | "unassigned"
+  >("all");
 
   // Получение данных
   const { data: groups = [], isLoading } = useQuery({
@@ -92,6 +104,30 @@ export default function AcademicAdvisorGroupsPage() {
     }, {} as Record<string, User>);
   }, [students]);
 
+  // Фильтрация студентов для таблицы управления
+  const filteredStudentsForManagement = React.useMemo(() => {
+    if (!selectedGroup) return [];
+
+    const groupStudentIds = selectedGroup.studentIds || [];
+
+    return students.filter((student) => {
+      // Фильтр по поиску
+      const matchesSearch =
+        studentSearchTerm === "" ||
+        student.name.toLowerCase().includes(studentSearchTerm.toLowerCase()) ||
+        student.email.toLowerCase().includes(studentSearchTerm.toLowerCase());
+
+      // Фильтр по статусу назначения
+      const isAssigned = groupStudentIds.includes(student.$id);
+      const matchesStatus =
+        filterStatus === "all" ||
+        (filterStatus === "assigned" && isAssigned) ||
+        (filterStatus === "unassigned" && !isAssigned);
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [students, selectedGroup, studentSearchTerm, filterStatus]);
+
   const handleCreateSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -129,25 +165,83 @@ export default function AcademicAdvisorGroupsPage() {
 
   const handleManageStudents = (group: Group) => {
     setSelectedGroup(group);
-    setIsStudentModalOpen(true);
+    setViewMode("manage");
+    setSelectedStudentIds([]);
+    setStudentSearchTerm("");
+    setFilterStatus("all");
   };
 
-  const handleStudentToggle = (studentId: string, isAdding: boolean) => {
-    if (!selectedGroup) return;
+  const handleBackToList = () => {
+    setViewMode("list");
+    setSelectedGroup(null);
+    setSelectedStudentIds([]);
+  };
+
+  const handleStudentSelect = (studentId: string, isSelected: boolean) => {
+    if (isSelected) {
+      setSelectedStudentIds([...selectedStudentIds, studentId]);
+    } else {
+      setSelectedStudentIds(
+        selectedStudentIds.filter((id) => id !== studentId)
+      );
+    }
+  };
+
+  const handleSelectAll = () => {
+    if (selectedStudentIds.length === filteredStudentsForManagement.length) {
+      setSelectedStudentIds([]);
+    } else {
+      setSelectedStudentIds(filteredStudentsForManagement.map((s) => s.$id));
+    }
+  };
+
+  const handleBulkAddToGroup = () => {
+    if (!selectedGroup || selectedStudentIds.length === 0) return;
 
     const currentStudentIds = selectedGroup.studentIds || [];
-    const updatedStudentIds = isAdding
-      ? [...currentStudentIds, studentId]
-      : currentStudentIds.filter((id) => id !== studentId);
+    const newStudentIds = selectedStudentIds.filter(
+      (id) => !currentStudentIds.includes(id)
+    );
+    const updatedStudentIds = [...currentStudentIds, ...newStudentIds];
 
-    const updatedGroup = { ...selectedGroup, studentIds: updatedStudentIds };
-    setSelectedGroup(updatedGroup);
+    updateMutation.mutate(
+      {
+        id: selectedGroup.$id,
+        data: { studentIds: updatedStudentIds },
+      },
+      {
+        onSuccess: () => {
+          setSelectedGroup({ ...selectedGroup, studentIds: updatedStudentIds });
+          setSelectedStudentIds([]);
+          toast.success(`Добавлено ${newStudentIds.length} студентов в группу`);
+        },
+      }
+    );
+  };
 
-    // Обновляем группу в базе
-    updateMutation.mutate({
-      id: selectedGroup.$id,
-      data: { studentIds: updatedStudentIds },
-    });
+  const handleBulkRemoveFromGroup = () => {
+    if (!selectedGroup || selectedStudentIds.length === 0) return;
+
+    const currentStudentIds = selectedGroup.studentIds || [];
+    const updatedStudentIds = currentStudentIds.filter(
+      (id) => !selectedStudentIds.includes(id)
+    );
+
+    updateMutation.mutate(
+      {
+        id: selectedGroup.$id,
+        data: { studentIds: updatedStudentIds },
+      },
+      {
+        onSuccess: () => {
+          setSelectedGroup({ ...selectedGroup, studentIds: updatedStudentIds });
+          setSelectedStudentIds([]);
+          toast.success(
+            `Удалено ${selectedStudentIds.length} студентов из группы`
+          );
+        },
+      }
+    );
   };
 
   const getGroupStats = (group: Group) => {
@@ -173,6 +267,323 @@ export default function AcademicAdvisorGroupsPage() {
     );
   }
 
+  // Режим управления студентами
+  if (viewMode === "manage" && selectedGroup) {
+    const groupStudentIds = selectedGroup.studentIds || [];
+    const selectedStudentsInGroup = selectedStudentIds.filter((id) =>
+      groupStudentIds.includes(id)
+    );
+    const selectedStudentsNotInGroup = selectedStudentIds.filter(
+      (id) => !groupStudentIds.includes(id)
+    );
+
+    return (
+      <div className="p-6">
+        <div className="mb-6">
+          <div className="flex items-center gap-4 mb-4">
+            <button
+              onClick={handleBackToList}
+              className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Назад к группам
+            </button>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Управление студентами: {selectedGroup.title}
+              </h1>
+              <p className="text-gray-600">
+                В группе: {groupStudentIds.length} студентов
+              </p>
+            </div>
+          </div>
+
+          {/* Массовые операции */}
+          {selectedStudentIds.length > 0 && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="text-sm font-medium text-blue-900">
+                    Выбрано студентов: {selectedStudentIds.length}
+                  </div>
+                  {selectedStudentsNotInGroup.length > 0 && (
+                    <div className="text-xs text-blue-700">
+                      Не в группе: {selectedStudentsNotInGroup.length}
+                    </div>
+                  )}
+                  {selectedStudentsInGroup.length > 0 && (
+                    <div className="text-xs text-blue-700">
+                      В группе: {selectedStudentsInGroup.length}
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  {selectedStudentsNotInGroup.length > 0 && (
+                    <button
+                      onClick={handleBulkAddToGroup}
+                      disabled={updateMutation.isPending}
+                      className="flex items-center gap-2 px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 transition-colors disabled:opacity-50"
+                    >
+                      <UserPlus className="h-4 w-4" />
+                      Добавить в группу ({selectedStudentsNotInGroup.length})
+                    </button>
+                  )}
+                  {selectedStudentsInGroup.length > 0 && (
+                    <button
+                      onClick={handleBulkRemoveFromGroup}
+                      disabled={updateMutation.isPending}
+                      className="flex items-center gap-2 px-3 py-1 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition-colors disabled:opacity-50"
+                    >
+                      <UserMinus className="h-4 w-4" />
+                      Удалить из группы ({selectedStudentsInGroup.length})
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setSelectedStudentIds([])}
+                    className="flex items-center gap-2 px-3 py-1 bg-gray-600 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                    Очистить выбор
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Фильтры для управления студентами */}
+        <div className="bg-white p-4 rounded-lg shadow border mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Поиск студентов
+              </label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <input
+                  type="text"
+                  placeholder="Имя или email..."
+                  value={studentSearchTerm}
+                  onChange={(e) => setStudentSearchTerm(e.target.value)}
+                  className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Статус в группе
+              </label>
+              <select
+                value={filterStatus}
+                onChange={(e) =>
+                  setFilterStatus(
+                    e.target.value as "all" | "assigned" | "unassigned"
+                  )
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              >
+                <option value="all">Все студенты</option>
+                <option value="assigned">В группе</option>
+                <option value="unassigned">Не в группе</option>
+              </select>
+            </div>
+
+            <div className="flex items-end">
+              <div className="text-sm text-gray-600">
+                Показано: {filteredStudentsForManagement.length} из{" "}
+                {students.length}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Таблица студентов */}
+        <div className="bg-white rounded-lg shadow border">
+          <div className="p-4 border-b">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleSelectAll}
+                  className="flex items-center gap-2 px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                >
+                  {selectedStudentIds.length ===
+                    filteredStudentsForManagement.length &&
+                  filteredStudentsForManagement.length > 0 ? (
+                    <CheckSquare className="h-4 w-4" />
+                  ) : (
+                    <Square className="h-4 w-4" />
+                  )}
+                  {selectedStudentIds.length ===
+                    filteredStudentsForManagement.length &&
+                  filteredStudentsForManagement.length > 0
+                    ? "Снять выбор со всех"
+                    : "Выбрать всех"}
+                </button>
+                {updateMutation.isPending && (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    Обновление...
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <input
+                      type="checkbox"
+                      checked={
+                        selectedStudentIds.length ===
+                          filteredStudentsForManagement.length &&
+                        filteredStudentsForManagement.length > 0
+                      }
+                      onChange={handleSelectAll}
+                      className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    />
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Студент
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Email
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Статус
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    В группе
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Действие
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredStudentsForManagement.map((student) => {
+                  const isSelected = selectedStudentIds.includes(student.$id);
+                  const isInGroup = groupStudentIds.includes(student.$id);
+
+                  return (
+                    <tr
+                      key={student.$id}
+                      className={isSelected ? "bg-blue-50" : "hover:bg-gray-50"}
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={(e) =>
+                            handleStudentSelect(student.$id, e.target.checked)
+                          }
+                          className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                        />
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <GraduationCap className="h-5 w-5 text-gray-400 mr-3" />
+                          <div className="text-sm font-medium text-gray-900">
+                            {student.name}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {student.email}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs rounded-full ${
+                            student.isActive
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {student.isActive ? "Активен" : "Неактивен"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs rounded-full ${
+                            isInGroup
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-gray-100 text-gray-800"
+                          }`}
+                        >
+                          {isInGroup ? "В группе" : "Не в группе"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <button
+                          onClick={() => {
+                            const newStudentIds = isInGroup
+                              ? groupStudentIds.filter(
+                                  (id) => id !== student.$id
+                                )
+                              : [...groupStudentIds, student.$id];
+
+                            updateMutation.mutate(
+                              {
+                                id: selectedGroup.$id,
+                                data: { studentIds: newStudentIds },
+                              },
+                              {
+                                onSuccess: () => {
+                                  setSelectedGroup({
+                                    ...selectedGroup,
+                                    studentIds: newStudentIds,
+                                  });
+                                },
+                              }
+                            );
+                          }}
+                          disabled={updateMutation.isPending}
+                          className={`flex items-center gap-1 px-2 py-1 text-xs rounded transition-colors ${
+                            isInGroup
+                              ? "bg-red-100 text-red-700 hover:bg-red-200"
+                              : "bg-green-100 text-green-700 hover:bg-green-200"
+                          }`}
+                        >
+                          {isInGroup ? (
+                            <>
+                              <UserMinus className="h-3 w-3" />
+                              Удалить
+                            </>
+                          ) : (
+                            <>
+                              <UserPlus className="h-3 w-3" />
+                              Добавить
+                            </>
+                          )}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {filteredStudentsForManagement.length === 0 && (
+            <div className="text-center py-12">
+              <GraduationCap className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Студенты не найдены
+              </h3>
+              <p className="text-gray-500">
+                Попробуйте изменить параметры поиска или фильтра
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Основной режим просмотра групп
   return (
     <div className="p-6">
       <div className="mb-8">
@@ -506,128 +917,6 @@ export default function AcademicAdvisorGroupsPage() {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
-
-      {/* Модальное окно управления студентами */}
-      {isStudentModalOpen && selectedGroup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-            <div className="p-6 border-b">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-900">
-                  Студенты группы "{selectedGroup.title}"
-                </h2>
-                <button
-                  onClick={() => {
-                    setIsStudentModalOpen(false);
-                    setSelectedGroup(null);
-                  }}
-                  className="p-2 text-gray-400 hover:text-gray-600"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-
-            <div className="p-6 overflow-y-auto max-h-[70vh]">
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-medium text-gray-900 mb-3">
-                    Все студенты ({students.length})
-                  </h3>
-                  <div className="space-y-2 max-h-96 overflow-y-auto">
-                    {students.map((student) => {
-                      const isInGroup =
-                        selectedGroup.studentIds?.includes(student.$id) ||
-                        false;
-                      return (
-                        <div
-                          key={student.$id}
-                          className="flex items-center justify-between p-3 border rounded-lg"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="flex-shrink-0">
-                              <GraduationCap className="h-5 w-5 text-gray-400" />
-                            </div>
-                            <div>
-                              <div className="font-medium text-gray-900">
-                                {student.name}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                {student.email}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            {!student.isActive && (
-                              <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded">
-                                Неактивен
-                              </span>
-                            )}
-
-                            <button
-                              onClick={() =>
-                                handleStudentToggle(student.$id, !isInGroup)
-                              }
-                              disabled={updateMutation.isPending}
-                              className={`p-2 rounded transition-colors ${
-                                isInGroup
-                                  ? "bg-red-100 text-red-600 hover:bg-red-200"
-                                  : "bg-green-100 text-green-600 hover:bg-green-200"
-                              }`}
-                            >
-                              {isInGroup ? (
-                                <UserMinus className="h-4 w-4" />
-                              ) : (
-                                <UserPlus className="h-4 w-4" />
-                              )}
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {selectedGroup.studentIds &&
-                  selectedGroup.studentIds.length > 0 && (
-                    <div className="pt-4 border-t">
-                      <h4 className="font-medium text-gray-900 mb-2">
-                        Студенты в группе ({selectedGroup.studentIds.length})
-                      </h4>
-                      <div className="grid grid-cols-2 gap-2">
-                        {selectedGroup.studentIds.map((studentId) => {
-                          const student = studentsMap[studentId];
-                          return student ? (
-                            <div
-                              key={studentId}
-                              className="p-2 bg-green-50 text-green-800 rounded text-sm"
-                            >
-                              {student.name}
-                            </div>
-                          ) : null;
-                        })}
-                      </div>
-                    </div>
-                  )}
-              </div>
-            </div>
-
-            <div className="px-6 py-3 bg-gray-50 flex justify-end">
-              <button
-                onClick={() => {
-                  setIsStudentModalOpen(false);
-                  setSelectedGroup(null);
-                  queryClient.invalidateQueries({ queryKey: ["groups"] });
-                }}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-              >
-                Готово
-              </button>
-            </div>
           </div>
         </div>
       )}

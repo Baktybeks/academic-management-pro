@@ -12,9 +12,9 @@ import {
   AttendanceRecord,
   AttendanceFilters,
 } from "@/services/attendanceAnalytics";
-import { AttendanceStatsComponent } from "@/components/attendance/AttendanceStats";
 import { AttendanceFilters as FiltersComponent } from "@/components/attendance/AttendanceFilters";
 import { AttendanceDistribution } from "@/components/attendance/AttendanceDistribution";
+import { AttendanceStatsComponent } from "@/components/attendance/AttendanceStats";
 import { AttendanceTable } from "@/components/attendance/AttendanceTable";
 import { AttendanceDetailedView } from "@/components/attendance/AttendanceDetailedView";
 import { AttendanceAnalytics } from "@/components/attendance/AttendanceAnalytics";

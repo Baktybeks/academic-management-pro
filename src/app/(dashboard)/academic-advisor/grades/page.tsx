@@ -9,6 +9,7 @@ import { groupApi } from "@/services/groupService";
 import { subjectApi } from "@/services/subjectService";
 import { gradingPeriodApi } from "@/services/gradingPeriodService";
 import { assignmentApi } from "@/services/assignmentService";
+import { teacherAssignmentApi } from "@/services/teacherAssignmentService";
 import {
   BarChart3,
   Users,
@@ -24,7 +25,11 @@ import {
   FileText,
   Download,
   Eye,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
 } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function AcademicAdvisorGradesPage() {
   const [selectedGroup, setSelectedGroup] = useState<string>("all");
@@ -52,95 +57,229 @@ export default function AcademicAdvisorGradesPage() {
     queryFn: gradingPeriodApi.getAllGradingPeriods,
   });
 
+  const { data: assignments = [] } = useQuery({
+    queryKey: ["assignments"],
+    queryFn: assignmentApi.getAllAssignments,
+  });
+
+  const { data: submissions = [] } = useQuery({
+    queryKey: ["submissions"],
+    queryFn: async () => {
+      // Получаем все проверенные работы
+      const allSubmissions = [];
+      for (const assignment of assignments) {
+        const assignmentSubmissions =
+          await assignmentApi.getSubmissionsByAssignment(assignment.$id);
+        allSubmissions.push(
+          ...assignmentSubmissions.filter(
+            (s) => s.isChecked && s.score !== null
+          )
+        );
+      }
+      return allSubmissions;
+    },
+    enabled: assignments.length > 0,
+  });
+
+  const { data: teacherAssignments = [] } = useQuery({
+    queryKey: ["teacher-assignments"],
+    queryFn: teacherAssignmentApi.getAllAssignments,
+  });
+
   const { data: finalGrades = [] } = useQuery({
     queryKey: ["final-grades", selectedPeriod],
     queryFn: () => {
       if (selectedPeriod !== "all") {
         return gradingPeriodApi.getFinalGradesByPeriod(selectedPeriod);
       }
-      return Promise.resolve([]);
+      return [];
     },
     enabled: selectedPeriod !== "all",
   });
 
-  // Демо-данные для отображения
-  const demoGrades = [
-    {
-      id: "1",
-      studentName: "Иванов Иван Иванович",
-      groupName: "ИТ-21-1",
-      subjectName: "Математический анализ",
-      teacherName: "Петров П.П.",
-      totalScore: 87,
-      letterGrade: "отлично",
-      assignments: [
-        { name: "Контрольная работа 1", score: 85, maxScore: 100 },
-        { name: "Лабораторная работа 1", score: 90, maxScore: 100 },
-        { name: "Тест 1", score: 88, maxScore: 100 },
-      ],
-      attendance: 95,
-    },
-    {
-      id: "2",
-      studentName: "Петрова Анна Сергеевна",
-      groupName: "ИТ-21-1",
-      subjectName: "Программирование",
-      teacherName: "Сидоров С.С.",
-      totalScore: 92,
-      letterGrade: "отлично",
-      assignments: [
-        { name: "Проект 1", score: 95, maxScore: 100 },
-        { name: "Практическая работа 1", score: 88, maxScore: 100 },
-        { name: "Экзамен", score: 93, maxScore: 100 },
-      ],
-      attendance: 98,
-    },
-    {
-      id: "3",
-      studentName: "Сидоров Петр Алексеевич",
-      groupName: "ИТ-21-2",
-      subjectName: "Базы данных",
-      teacherName: "Козлова К.К.",
-      totalScore: 74,
-      letterGrade: "хорошо",
-      assignments: [
-        { name: "Курсовая работа", score: 78, maxScore: 100 },
-        { name: "Лабораторная работа 2", score: 72, maxScore: 100 },
-        { name: "Зачет", score: 76, maxScore: 100 },
-      ],
-      attendance: 85,
-    },
-  ];
+  // Создание карт для быстрого доступа
+  const teachersMap = React.useMemo(() => {
+    return teachers.reduce((acc, teacher) => {
+      acc[teacher.$id] = teacher;
+      return acc;
+    }, {} as Record<string, any>);
+  }, [teachers]);
+
+  const studentsMap = React.useMemo(() => {
+    return students.reduce((acc, student) => {
+      acc[student.$id] = student;
+      return acc;
+    }, {} as Record<string, any>);
+  }, [students]);
+
+  const groupsMap = React.useMemo(() => {
+    return groups.reduce((acc, group) => {
+      acc[group.$id] = group;
+      return acc;
+    }, {} as Record<string, any>);
+  }, [groups]);
+
+  const subjectsMap = React.useMemo(() => {
+    return subjects.reduce((acc, subject) => {
+      acc[subject.$id] = subject;
+      return acc;
+    }, {} as Record<string, any>);
+  }, [subjects]);
+
+  const assignmentsMap = React.useMemo(() => {
+    return assignments.reduce((acc, assignment) => {
+      acc[assignment.$id] = assignment;
+      return acc;
+    }, {} as Record<string, any>);
+  }, [assignments]);
+
+  // Агрегированные данные оценок
+  const gradesData = React.useMemo(() => {
+    const studentGrades: Record<
+      string,
+      {
+        studentId: string;
+        studentName: string;
+        groupId: string;
+        groupName: string;
+        subjectId: string;
+        subjectName: string;
+        teacherId: string;
+        teacherName: string;
+        assignments: any[];
+        totalScore: number;
+        averageScore: number;
+        letterGrade: string;
+      }
+    > = {};
+
+    // Группируем оценки по студентам, предметам и группам
+    submissions.forEach((submission) => {
+      const assignment = assignmentsMap[submission.assignmentId];
+      if (!assignment) return;
+
+      const student = studentsMap[submission.studentId];
+      const group = groupsMap[assignment.groupId];
+      const subject = subjectsMap[assignment.subjectId];
+      const teacher = teachersMap[assignment.teacherId];
+
+      if (!student || !group || !subject || !teacher) return;
+
+      const key = `${submission.studentId}-${assignment.subjectId}-${assignment.groupId}`;
+
+      if (!studentGrades[key]) {
+        studentGrades[key] = {
+          studentId: submission.studentId,
+          studentName: student.name,
+          groupId: assignment.groupId,
+          groupName: group.title,
+          subjectId: assignment.subjectId,
+          subjectName: subject.title,
+          teacherId: assignment.teacherId,
+          teacherName: teacher.name,
+          assignments: [],
+          totalScore: 0,
+          averageScore: 0,
+          letterGrade: "",
+        };
+      }
+
+      studentGrades[key].assignments.push({
+        assignmentId: assignment.$id,
+        assignmentTitle: assignment.title,
+        maxScore: assignment.maxScore,
+        score: submission.score,
+        percentage: ((submission.score ?? 0) / assignment.maxScore) * 100,
+        submittedAt: submission.submittedAt,
+        checkedAt: submission.checkedAt,
+        comment: submission.comment,
+      });
+    });
+
+    // Вычисляем средние оценки и буквенные оценки
+    Object.values(studentGrades).forEach((studentData) => {
+      if (studentData.assignments.length > 0) {
+        const totalPercentage = studentData.assignments.reduce(
+          (sum, assignment) => sum + assignment.percentage,
+          0
+        );
+        studentData.averageScore =
+          totalPercentage / studentData.assignments.length;
+        studentData.totalScore = Math.round(studentData.averageScore);
+
+        // Определяем буквенную оценку
+        if (studentData.averageScore >= 87) {
+          studentData.letterGrade = "отлично";
+        } else if (studentData.averageScore >= 74) {
+          studentData.letterGrade = "хорошо";
+        } else if (studentData.averageScore >= 61) {
+          studentData.letterGrade = "удовлетворительно";
+        } else {
+          studentData.letterGrade = "неудовлетворительно";
+        }
+      }
+    });
+
+    return Object.values(studentGrades);
+  }, [
+    submissions,
+    assignmentsMap,
+    studentsMap,
+    groupsMap,
+    subjectsMap,
+    teachersMap,
+  ]);
 
   // Вычисляем статистику
-  const stats = {
-    totalStudents: students.length,
-    studentsWithGrades: demoGrades.length,
-    averageScore: Math.round(
-      demoGrades.reduce((sum, grade) => sum + grade.totalScore, 0) /
-        demoGrades.length
-    ),
-    excellentGrades: demoGrades.filter((g) => g.letterGrade === "отлично")
-      .length,
-    goodGrades: demoGrades.filter((g) => g.letterGrade === "хорошо").length,
-    satisfactoryGrades: demoGrades.filter(
+  const stats = React.useMemo(() => {
+    const totalStudents = students.length;
+    const studentsWithGrades = gradesData.length;
+    const averageScore =
+      gradesData.length > 0
+        ? Math.round(
+            gradesData.reduce((sum, grade) => sum + grade.averageScore, 0) /
+              gradesData.length
+          )
+        : 0;
+
+    const excellentGrades = gradesData.filter(
+      (g) => g.letterGrade === "отлично"
+    ).length;
+    const goodGrades = gradesData.filter(
+      (g) => g.letterGrade === "хорошо"
+    ).length;
+    const satisfactoryGrades = gradesData.filter(
       (g) => g.letterGrade === "удовлетворительно"
-    ).length,
-    unsatisfactoryGrades: demoGrades.filter(
+    ).length;
+    const unsatisfactoryGrades = gradesData.filter(
       (g) => g.letterGrade === "неудовлетворительно"
-    ).length,
-  };
+    ).length;
+
+    return {
+      totalStudents,
+      studentsWithGrades,
+      averageScore,
+      excellentGrades,
+      goodGrades,
+      satisfactoryGrades,
+      unsatisfactoryGrades,
+      totalAssignments: assignments.length,
+      checkedSubmissions: submissions.length,
+    };
+  }, [students, gradesData, assignments, submissions]);
 
   // Фильтрация данных
-  const filteredGrades = demoGrades.filter((grade) => {
-    if (selectedGroup !== "all" && grade.groupName !== selectedGroup)
-      return false;
-    if (selectedSubject !== "all" && grade.subjectName !== selectedSubject)
-      return false;
-    if (selectedTeacher !== "all" && grade.teacherName !== selectedTeacher)
-      return false;
-    return true;
-  });
+  const filteredGrades = React.useMemo(() => {
+    return gradesData.filter((grade) => {
+      if (selectedGroup !== "all" && grade.groupId !== selectedGroup)
+        return false;
+      if (selectedSubject !== "all" && grade.subjectId !== selectedSubject)
+        return false;
+      if (selectedTeacher !== "all" && grade.teacherId !== selectedTeacher)
+        return false;
+      return true;
+    });
+  }, [gradesData, selectedGroup, selectedSubject, selectedTeacher]);
 
   const getGradeColor = (letterGrade: string) => {
     switch (letterGrade) {
@@ -158,8 +297,53 @@ export default function AcademicAdvisorGradesPage() {
   };
 
   const exportGrades = () => {
-    console.log("Экспорт оценок");
-    // Здесь будет логика экспорта
+    try {
+      const headers = [
+        "Студент",
+        "Группа",
+        "Дисциплина",
+        "Преподаватель",
+        "Средний балл",
+        "Оценка",
+        "Количество заданий",
+      ];
+
+      const rows = filteredGrades.map((grade) => [
+        grade.studentName,
+        grade.groupName,
+        grade.subjectName,
+        grade.teacherName,
+        grade.averageScore.toFixed(1),
+        grade.letterGrade,
+        grade.assignments.length.toString(),
+      ]);
+
+      const csvContent = [headers, ...rows]
+        .map((row) => row.map((cell) => `"${cell}"`).join(","))
+        .join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute(
+        "download",
+        `grades_report_${new Date().toISOString().split("T")[0]}.csv`
+      );
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("Отчет успешно экспортирован");
+    } catch (error) {
+      toast.error("Ошибка при экспорте отчета");
+    }
+  };
+
+  const handleViewDetails = (grade: any) => {
+    // Можно добавить логику для детального просмотра
+    console.log("Просмотр деталей для:", grade);
   };
 
   return (
@@ -206,7 +390,7 @@ export default function AcademicAdvisorGradesPage() {
               </p>
               <div className="flex items-center text-green-600 text-xs">
                 <TrendingUp className="h-3 w-3 mr-1" />
-                +2.3%
+                {stats.averageScore > 75 ? "Хорошо" : "Требует улучшения"}
               </div>
             </div>
           </div>
@@ -223,9 +407,11 @@ export default function AcademicAdvisorGradesPage() {
                 {stats.excellentGrades}
               </p>
               <p className="text-xs text-gray-500">
-                {Math.round(
-                  (stats.excellentGrades / stats.studentsWithGrades) * 100
-                )}
+                {stats.studentsWithGrades > 0
+                  ? Math.round(
+                      (stats.excellentGrades / stats.studentsWithGrades) * 100
+                    )
+                  : 0}
                 % от всех
               </p>
             </div>
@@ -242,11 +428,13 @@ export default function AcademicAdvisorGradesPage() {
                 Качество знаний
               </p>
               <p className="text-2xl font-bold text-gray-900">
-                {Math.round(
-                  ((stats.excellentGrades + stats.goodGrades) /
-                    stats.studentsWithGrades) *
-                    100
-                )}
+                {stats.studentsWithGrades > 0
+                  ? Math.round(
+                      ((stats.excellentGrades + stats.goodGrades) /
+                        stats.studentsWithGrades) *
+                        100
+                    )
+                  : 0}
                 %
               </p>
               <p className="text-xs text-gray-500">Отлично + Хорошо</p>
@@ -284,7 +472,7 @@ export default function AcademicAdvisorGradesPage() {
             >
               <option value="all">Все группы</option>
               {groups.map((group) => (
-                <option key={group.$id} value={group.title}>
+                <option key={group.$id} value={group.$id}>
                   {group.title}
                 </option>
               ))}
@@ -302,7 +490,7 @@ export default function AcademicAdvisorGradesPage() {
             >
               <option value="all">Все дисциплины</option>
               {subjects.map((subject) => (
-                <option key={subject.$id} value={subject.title}>
+                <option key={subject.$id} value={subject.$id}>
                   {subject.title}
                 </option>
               ))}
@@ -320,7 +508,7 @@ export default function AcademicAdvisorGradesPage() {
             >
               <option value="all">Все преподаватели</option>
               {teachers.map((teacher) => (
-                <option key={teacher.$id} value={teacher.name}>
+                <option key={teacher.$id} value={teacher.$id}>
                   {teacher.name}
                 </option>
               ))}
@@ -351,9 +539,11 @@ export default function AcademicAdvisorGradesPage() {
             </div>
             <div className="text-sm text-green-800">Отлично</div>
             <div className="text-xs text-gray-600">
-              {Math.round(
-                (stats.excellentGrades / stats.studentsWithGrades) * 100
-              )}
+              {stats.studentsWithGrades > 0
+                ? Math.round(
+                    (stats.excellentGrades / stats.studentsWithGrades) * 100
+                  )
+                : 0}
               %
             </div>
           </div>
@@ -363,7 +553,12 @@ export default function AcademicAdvisorGradesPage() {
             </div>
             <div className="text-sm text-blue-800">Хорошо</div>
             <div className="text-xs text-gray-600">
-              {Math.round((stats.goodGrades / stats.studentsWithGrades) * 100)}%
+              {stats.studentsWithGrades > 0
+                ? Math.round(
+                    (stats.goodGrades / stats.studentsWithGrades) * 100
+                  )
+                : 0}
+              %
             </div>
           </div>
           <div className="text-center p-4 bg-yellow-50 rounded-lg">
@@ -372,9 +567,11 @@ export default function AcademicAdvisorGradesPage() {
             </div>
             <div className="text-sm text-yellow-800">Удовлетворительно</div>
             <div className="text-xs text-gray-600">
-              {Math.round(
-                (stats.satisfactoryGrades / stats.studentsWithGrades) * 100
-              )}
+              {stats.studentsWithGrades > 0
+                ? Math.round(
+                    (stats.satisfactoryGrades / stats.studentsWithGrades) * 100
+                  )
+                : 0}
               %
             </div>
           </div>
@@ -384,16 +581,19 @@ export default function AcademicAdvisorGradesPage() {
             </div>
             <div className="text-sm text-red-800">Неудовлетворительно</div>
             <div className="text-xs text-gray-600">
-              {Math.round(
-                (stats.unsatisfactoryGrades / stats.studentsWithGrades) * 100
-              )}
+              {stats.studentsWithGrades > 0
+                ? Math.round(
+                    (stats.unsatisfactoryGrades / stats.studentsWithGrades) *
+                      100
+                  )
+                : 0}
               %
             </div>
           </div>
         </div>
       </div>
 
-      {/* Список оценок */}
+      {/* Основной контент */}
       {viewMode === "overview" && (
         <div className="bg-white rounded-lg shadow border">
           <div className="p-6">
@@ -401,88 +601,108 @@ export default function AcademicAdvisorGradesPage() {
               Список оценок ({filteredGrades.length})
             </h3>
 
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Студент
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Группа
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Дисциплина
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Преподаватель
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Балл
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Оценка
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Посещаемость
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Действия
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredGrades.map((grade) => (
-                    <tr key={grade.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {grade.studentName}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {grade.groupName}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {grade.subjectName}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {grade.teacherName}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-bold text-gray-900">
-                          {grade.totalScore}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`inline-flex px-2 py-1 text-xs rounded-full ${getGradeColor(
-                            grade.letterGrade
-                          )}`}
-                        >
-                          {grade.letterGrade}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {grade.attendance}%
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <button className="text-indigo-600 hover:text-indigo-900">
-                          <Eye className="h-4 w-4" />
-                        </button>
-                      </td>
+            {filteredGrades.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Студент
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Группа
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Дисциплина
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Преподаватель
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Балл
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Оценка
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Заданий
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Действия
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredGrades.map((grade, index) => (
+                      <tr
+                        key={`${grade.studentId}-${grade.subjectId}-${grade.groupId}`}
+                        className="hover:bg-gray-50"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">
+                            {grade.studentName}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            {grade.groupName}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            {grade.subjectName}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            {grade.teacherName}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-bold text-gray-900">
+                            {grade.averageScore.toFixed(1)}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span
+                            className={`inline-flex px-2 py-1 text-xs rounded-full ${getGradeColor(
+                              grade.letterGrade
+                            )}`}
+                          >
+                            {grade.letterGrade}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            {grade.assignments.length}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <button
+                            onClick={() => handleViewDetails(grade)}
+                            className="text-indigo-600 hover:text-indigo-900"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Нет данных об оценках
+                </h3>
+                <p className="text-gray-500">
+                  {stats.totalAssignments === 0
+                    ? "Создайте задания и проверьте работы студентов для отображения оценок"
+                    : "Нет проверенных работ для выбранных фильтров"}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -490,9 +710,9 @@ export default function AcademicAdvisorGradesPage() {
       {/* Детальный просмотр */}
       {viewMode === "detailed" && (
         <div className="space-y-6">
-          {filteredGrades.map((grade) => (
+          {filteredGrades.map((grade, index) => (
             <div
-              key={grade.id}
+              key={`${grade.studentId}-${grade.subjectId}-${grade.groupId}`}
               className="bg-white rounded-lg shadow border p-6"
             >
               <div className="flex items-center justify-between mb-4">
@@ -507,7 +727,7 @@ export default function AcademicAdvisorGradesPage() {
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold text-gray-900">
-                    {grade.totalScore}
+                    {grade.averageScore.toFixed(1)}
                   </div>
                   <span
                     className={`inline-flex px-2 py-1 text-xs rounded-full ${getGradeColor(
@@ -525,17 +745,22 @@ export default function AcademicAdvisorGradesPage() {
                     Результаты заданий
                   </h4>
                   <div className="space-y-2">
-                    {grade.assignments.map((assignment, index) => (
+                    {grade.assignments.map((assignment, idx) => (
                       <div
-                        key={index}
+                        key={assignment.assignmentId}
                         className="flex justify-between items-center p-3 bg-gray-50 rounded"
                       >
                         <span className="text-sm text-gray-700">
-                          {assignment.name}
+                          {assignment.assignmentTitle}
                         </span>
-                        <span className="font-medium">
-                          {assignment.score}/{assignment.maxScore}
-                        </span>
+                        <div className="text-right">
+                          <div className="font-medium">
+                            {assignment.score}/{assignment.maxScore}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {assignment.percentage.toFixed(1)}%
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -548,21 +773,43 @@ export default function AcademicAdvisorGradesPage() {
                   <div className="space-y-3">
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">
-                        Посещаемость:
+                        Всего заданий:
                       </span>
-                      <span className="font-medium">{grade.attendance}%</span>
+                      <span className="font-medium">
+                        {grade.assignments.length}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">
-                        Среднее за задания:
+                        Средний балл:
                       </span>
                       <span className="font-medium">
-                        {Math.round(
-                          grade.assignments.reduce(
-                            (sum, a) => sum + (a.score / a.maxScore) * 100,
-                            0
-                          ) / grade.assignments.length
-                        )}
+                        {grade.averageScore.toFixed(1)}%
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-600">
+                        Лучший результат:
+                      </span>
+                      <span className="font-medium text-green-600">
+                        {grade.assignments.length > 0
+                          ? Math.max(
+                              ...grade.assignments.map((a) => a.percentage)
+                            ).toFixed(1)
+                          : 0}
+                        %
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-600">
+                        Худший результат:
+                      </span>
+                      <span className="font-medium text-red-600">
+                        {grade.assignments.length > 0
+                          ? Math.min(
+                              ...grade.assignments.map((a) => a.percentage)
+                            ).toFixed(1)
+                          : 0}
                         %
                       </span>
                     </div>
@@ -582,36 +829,45 @@ export default function AcademicAdvisorGradesPage() {
               Статистика по группам
             </h3>
             <div className="space-y-4">
-              {["ИТ-21-1", "ИТ-21-2"].map((groupName) => {
-                const groupGrades = filteredGrades.filter(
-                  (g) => g.groupName === groupName
-                );
-                const avg =
-                  groupGrades.length > 0
-                    ? Math.round(
-                        groupGrades.reduce((sum, g) => sum + g.totalScore, 0) /
-                          groupGrades.length
-                      )
-                    : 0;
+              {Array.from(new Set(filteredGrades.map((g) => g.groupId))).map(
+                (groupId) => {
+                  const group = groupsMap[groupId];
+                  const groupGrades = filteredGrades.filter(
+                    (g) => g.groupId === groupId
+                  );
+                  const avg =
+                    groupGrades.length > 0
+                      ? Math.round(
+                          groupGrades.reduce(
+                            (sum, g) => sum + g.averageScore,
+                            0
+                          ) / groupGrades.length
+                        )
+                      : 0;
 
-                return (
-                  <div
-                    key={groupName}
-                    className="flex justify-between items-center p-3 bg-gray-50 rounded"
-                  >
-                    <div>
-                      <div className="font-medium">{groupName}</div>
-                      <div className="text-sm text-gray-600">
-                        {groupGrades.length} студентов
+                  return (
+                    <div
+                      key={groupId}
+                      className="flex justify-between items-center p-3 bg-gray-50 rounded"
+                    >
+                      <div>
+                        <div className="font-medium">
+                          {group?.title || "Неизвестная группа"}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {groupGrades.length} студентов
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-bold text-lg">{avg}</div>
+                        <div className="text-sm text-gray-500">
+                          Средний балл
+                        </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="font-bold text-lg">{avg}</div>
-                      <div className="text-sm text-gray-500">Средний балл</div>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                }
+              )}
             </div>
           </div>
 
@@ -620,16 +876,17 @@ export default function AcademicAdvisorGradesPage() {
               Статистика по дисциплинам
             </h3>
             <div className="space-y-4">
-              {["Математический анализ", "Программирование", "Базы данных"].map(
-                (subjectName) => {
+              {Array.from(new Set(filteredGrades.map((g) => g.subjectId))).map(
+                (subjectId) => {
+                  const subject = subjectsMap[subjectId];
                   const subjectGrades = filteredGrades.filter(
-                    (g) => g.subjectName === subjectName
+                    (g) => g.subjectId === subjectId
                   );
                   const avg =
                     subjectGrades.length > 0
                       ? Math.round(
                           subjectGrades.reduce(
-                            (sum, g) => sum + g.totalScore,
+                            (sum, g) => sum + g.averageScore,
                             0
                           ) / subjectGrades.length
                         )
@@ -637,11 +894,13 @@ export default function AcademicAdvisorGradesPage() {
 
                   return (
                     <div
-                      key={subjectName}
+                      key={subjectId}
                       className="flex justify-between items-center p-3 bg-gray-50 rounded"
                     >
                       <div>
-                        <div className="font-medium">{subjectName}</div>
+                        <div className="font-medium">
+                          {subject?.title || "Неизвестная дисциплина"}
+                        </div>
                         <div className="text-sm text-gray-600">
                           {subjectGrades.length} оценок
                         </div>
@@ -656,6 +915,145 @@ export default function AcademicAdvisorGradesPage() {
                   );
                 }
               )}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Статистика по преподавателям
+            </h3>
+            <div className="space-y-4">
+              {Array.from(new Set(filteredGrades.map((g) => g.teacherId))).map(
+                (teacherId) => {
+                  const teacher = teachersMap[teacherId];
+                  const teacherGrades = filteredGrades.filter(
+                    (g) => g.teacherId === teacherId
+                  );
+                  const avg =
+                    teacherGrades.length > 0
+                      ? Math.round(
+                          teacherGrades.reduce(
+                            (sum, g) => sum + g.averageScore,
+                            0
+                          ) / teacherGrades.length
+                        )
+                      : 0;
+
+                  return (
+                    <div
+                      key={teacherId}
+                      className="flex justify-between items-center p-3 bg-gray-50 rounded"
+                    >
+                      <div>
+                        <div className="font-medium">
+                          {teacher?.name || "Неизвестный преподаватель"}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {teacherGrades.length} оценок
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-bold text-lg">{avg}</div>
+                        <div className="text-sm text-gray-500">
+                          Средний балл
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+              )}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Общая статистика
+            </h3>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center p-3 bg-blue-50 rounded">
+                <span className="text-sm text-blue-700">Всего заданий:</span>
+                <span className="font-medium text-blue-900">
+                  {stats.totalAssignments}
+                </span>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-green-50 rounded">
+                <span className="text-sm text-green-700">
+                  Проверенных работ:
+                </span>
+                <span className="font-medium text-green-900">
+                  {stats.checkedSubmissions}
+                </span>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-purple-50 rounded">
+                <span className="text-sm text-purple-700">
+                  Активных преподавателей:
+                </span>
+                <span className="font-medium text-purple-900">
+                  {teachers.length}
+                </span>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-indigo-50 rounded">
+                <span className="text-sm text-indigo-700">
+                  Активных дисциплин:
+                </span>
+                <span className="font-medium text-indigo-900">
+                  {subjects.length}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Информационные блоки */}
+      {stats.studentsWithGrades === 0 && (
+        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <AlertTriangle className="h-5 w-5 text-blue-600 mr-3" />
+            <div>
+              <h3 className="text-sm font-medium text-blue-800">
+                Нет данных об оценках
+              </h3>
+              <p className="text-sm text-blue-700">
+                {stats.totalAssignments === 0
+                  ? "Пока не создано ни одного задания. Преподаватели должны создать задания для выставления оценок."
+                  : "Задания созданы, но работы студентов еще не проверены. Попросите преподавателей проверить работы."}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {stats.unsatisfactoryGrades > 0 && (
+        <div className="mt-6 bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <AlertTriangle className="h-5 w-5 text-red-600 mr-3" />
+            <div>
+              <h3 className="text-sm font-medium text-red-800">
+                Студенты с неудовлетворительными оценками
+              </h3>
+              <p className="text-sm text-red-700">
+                {stats.unsatisfactoryGrades} студентов имеют
+                неудовлетворительные оценки. Рекомендуется принять меры для
+                улучшения их успеваемости.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {stats.averageScore >= 85 && stats.studentsWithGrades > 0 && (
+        <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+            <div>
+              <h3 className="text-sm font-medium text-green-800">
+                Отличные показатели успеваемости!
+              </h3>
+              <p className="text-sm text-green-700">
+                Средний балл составляет {stats.averageScore}. Это говорит о
+                высоком качестве обучения и мотивации студентов.
+              </p>
             </div>
           </div>
         </div>
