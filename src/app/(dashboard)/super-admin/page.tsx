@@ -1,3 +1,5 @@
+// src/app/(dashboard)/super-admin/page.tsx
+
 "use client";
 
 import React from "react";
@@ -27,6 +29,7 @@ import {
 } from "lucide-react";
 
 export default function SuperAdminDashboard() {
+  // Получение данных для статистики
   const { data: users = [] } = useQuery({
     queryKey: ["users"],
     queryFn: userApi.getAllUsers,
@@ -57,8 +60,12 @@ export default function SuperAdminDashboard() {
     queryFn: surveyPeriodApi.getAllSurveyPeriods,
   });
 
+  console.log(gradingPeriods, "gradingPeriodsgradingPeriodsgradingPeriods");
+  console.log(surveyPeriods, "surveyPeriodsSurveyPeriodsSurveyPeriods");
+
+  // Подсчет статистики
   const stats = {
-    academicAdvisors: users.filter((u) => u.role === UserRole.ACADEMIC_ADVISOR)
+    academicAdvisors: users.filter((u) => u.role !== UserRole.SUPER_ADMIN)
       .length,
     subjects: subjects.filter((s) => s.isActive).length,
     groups: groups.length,
@@ -69,9 +76,9 @@ export default function SuperAdminDashboard() {
 
   const menuItems = [
     {
-      title: "Академ советники",
-      description: "Создание и управление академ советниками",
-      href: "/super-admin/academic-advisor",
+      title: "Пользователи",
+      description: "Создание и управление пользователей",
+      href: "/super-admin/users",
       icon: Users,
       color: "bg-blue-500 hover:bg-blue-600",
       count: stats.academicAdvisors,
@@ -134,6 +141,7 @@ export default function SuperAdminDashboard() {
     },
   ];
 
+  // Интерфейс для действий
   interface RecentAction {
     type: string;
     title: string;
@@ -143,9 +151,11 @@ export default function SuperAdminDashboard() {
     color: string;
   }
 
+  // Последние действия
   const recentActions = React.useMemo((): RecentAction[] => {
     const actions: RecentAction[] = [];
 
+    // Последние созданные пользователи
     const recentUsers = users
       .filter((u) => u.role !== UserRole.SUPER_ADMIN)
       .sort(
@@ -159,7 +169,7 @@ export default function SuperAdminDashboard() {
         type: "user_created",
         title: `Новый ${
           user.role === UserRole.ACADEMIC_ADVISOR
-            ? "академ советник"
+            ? "академсоветник"
             : user.role === UserRole.TEACHER
             ? "преподаватель"
             : user.role === UserRole.STUDENT
@@ -175,6 +185,7 @@ export default function SuperAdminDashboard() {
       });
     });
 
+    // Последние созданные дисциплины
     const recentSubjects = subjects
       .sort(
         (a, b) =>
@@ -193,6 +204,7 @@ export default function SuperAdminDashboard() {
       });
     });
 
+    // Последние созданные группы
     const recentGroups = groups
       .sort(
         (a, b) =>
@@ -213,6 +225,7 @@ export default function SuperAdminDashboard() {
       });
     });
 
+    // Последние созданные опросники
     const recentSurveys = surveys
       .sort(
         (a, b) =>
@@ -231,6 +244,7 @@ export default function SuperAdminDashboard() {
       });
     });
 
+    // Последние созданные периоды опросов
     const recentSurveyPeriods = surveyPeriods
       .sort(
         (a, b) =>
@@ -249,6 +263,7 @@ export default function SuperAdminDashboard() {
       });
     });
 
+    // Сортируем по времени и берем последние 10
     return actions
       .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
       .slice(0, 10);
@@ -328,7 +343,7 @@ export default function SuperAdminDashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">
-                  Академ советники
+                  Пользователи
                 </p>
                 <p className="text-2xl font-bold text-gray-900">
                   {stats.academicAdvisors}
@@ -447,10 +462,10 @@ export default function SuperAdminDashboard() {
       <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-blue-900 mb-3">
-            Основные функции Супер админа
+            Основные функции СуперАдмина
           </h3>
           <ul className="space-y-2 text-blue-800">
-            <li>• Создание и управление академ советниками</li>
+            <li>• Создание и управление академсоветниками</li>
             <li>• Создание дисциплин и учебных групп</li>
             <li>• Настройка периодов оценивания</li>
             <li>• Создание опросников для студентов</li>
@@ -465,10 +480,10 @@ export default function SuperAdminDashboard() {
             Рекомендации по работе
           </h3>
           <ul className="space-y-2 text-green-800">
-            <li>• Сначала создайте академ советников</li>
+            <li>• Сначала создайте академсоветников</li>
             <li>• Затем настройте дисциплины и группы</li>
             <li>• Создайте опросники и периоды опросов</li>
-            <li>• Назначение студентов производится академ советниками</li>
+            <li>• Назначение студентов производится академсоветниками</li>
             <li>• Регулярно проверяйте отчеты системы</li>
             <li>• Создавайте резервные копии данных</li>
             <li>• Мониторьте активность пользователей</li>
@@ -490,14 +505,14 @@ export default function SuperAdminDashboard() {
                 <p className="text-sm text-yellow-700">
                   {
                     users.filter(
-                      (u) => !u.isActive && u.role === UserRole.ACADEMIC_ADVISOR
+                      (u) => !u.isActive && u.role !== UserRole.SUPER_ADMIN
                     ).length
                   }{" "}
                   пользователей ожидают активации.
                 </p>
               </div>
               <Link
-                href="/super-admin/academic-advisor"
+                href="/super-admin/users"
                 className="ml-auto text-sm text-yellow-600 hover:text-yellow-800 font-medium"
               >
                 Просмотреть

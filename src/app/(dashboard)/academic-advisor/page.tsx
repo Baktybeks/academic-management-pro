@@ -191,7 +191,7 @@ export default function AcademicCouncilDashboard() {
     <div className="p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Панель Академсоветника
+          Панель aкадем советника
         </h1>
         <p className="text-gray-600">
           Управление пользователями, назначениями и мониторинг учебного процесса
