@@ -60,9 +60,6 @@ export default function SuperAdminDashboard() {
     queryFn: surveyPeriodApi.getAllSurveyPeriods,
   });
 
-  console.log(gradingPeriods, "gradingPeriodsgradingPeriodsgradingPeriods");
-  console.log(surveyPeriods, "surveyPeriodsSurveyPeriodsSurveyPeriods");
-
   // Подсчет статистики
   const stats = {
     academicAdvisors: users.filter((u) => u.role !== UserRole.SUPER_ADMIN)
