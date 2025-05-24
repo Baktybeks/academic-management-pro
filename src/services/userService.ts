@@ -226,7 +226,7 @@ export const userApi = {
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
       const recentlyCreated = users.filter(
-        (u) => new Date(u.createdAt) > weekAgo
+        (u) => new Date(u.$createdAt) > weekAgo
       ).length;
 
       return {

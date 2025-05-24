@@ -246,7 +246,7 @@ export default function SubjectsManagementPage() {
 
               <div className="text-xs text-gray-500 mb-4">
                 Создана:{" "}
-                {new Date(subject.createdAt).toLocaleDateString("ru-RU")}
+                {new Date(subject.$createdAt).toLocaleDateString("ru-RU")}
               </div>
 
               <div className="flex gap-2">

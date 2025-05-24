@@ -72,7 +72,7 @@ export const teacherAssignmentApi = {
     }
   },
 
-  // Создать назначение (только Академсоветник)
+  // Создать назначение (только Академ советник)
   createAssignment: async (
     data: CreateTeacherAssignmentDto,
     assignedBy: string
@@ -148,7 +148,7 @@ export const teacherAssignmentApi = {
     }
   },
 
-  // Получить назначения, созданные конкретным академсоветником
+  // Получить назначения, созданные конкретным академ советником
   getAssignmentsByAssigner: async (
     assignerId: string
   ): Promise<TeacherAssignment[]> => {

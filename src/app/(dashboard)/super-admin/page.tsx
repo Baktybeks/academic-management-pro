@@ -1,19 +1,15 @@
-// src/app/(dashboard)/super-admin/page.tsx
-
 "use client";
 
 import React from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import {
-  useAcademicCouncil,
-  useAllUsers,
-  usePendingUsers,
-} from "@/services/authService";
-import { subjectApi } from "@/services/subjectService";
+import { userApi } from "@/services/userService";
 import { groupApi } from "@/services/groupService";
+import { subjectApi } from "@/services/subjectService";
 import { surveyApi } from "@/services/surveyService";
+import { gradingPeriodApi } from "@/services/gradingPeriodService";
 import { surveyPeriodApi } from "@/services/surveyPeriodService";
+import { UserRole } from "@/types";
 import {
   Users,
   BookOpen,
@@ -21,23 +17,19 @@ import {
   Calendar,
   BarChart3,
   ClipboardList,
-  FileText,
   Settings,
-  TrendingUp,
+  FileText,
+  RefreshCw,
+  Plus,
+  UserCheck,
+  Eye,
   Clock,
-  AlertTriangle,
-  Activity,
 } from "lucide-react";
 
 export default function SuperAdminDashboard() {
-  // Получение данных для статистики
-  const { data: academicCouncil = [] } = useAcademicCouncil();
-  const { data: allUsers = [] } = useAllUsers();
-  const { data: pendingUsers = [] } = usePendingUsers();
-
-  const { data: subjects = [] } = useQuery({
-    queryKey: ["subjects"],
-    queryFn: subjectApi.getAllSubjects,
+  const { data: users = [] } = useQuery({
+    queryKey: ["users"],
+    queryFn: userApi.getAllUsers,
   });
 
   const { data: groups = [] } = useQuery({
@@ -45,24 +37,44 @@ export default function SuperAdminDashboard() {
     queryFn: groupApi.getAllGroups,
   });
 
+  const { data: subjects = [] } = useQuery({
+    queryKey: ["subjects"],
+    queryFn: subjectApi.getAllSubjects,
+  });
+
   const { data: surveys = [] } = useQuery({
     queryKey: ["surveys"],
     queryFn: surveyApi.getAllSurveys,
   });
 
-  const { data: activeSurveyPeriods = [] } = useQuery({
-    queryKey: ["active-survey-periods"],
-    queryFn: surveyPeriodApi.getActiveSurveyPeriods,
+  const { data: gradingPeriods = [] } = useQuery({
+    queryKey: ["grading-periods"],
+    queryFn: gradingPeriodApi.getAllGradingPeriods,
   });
+
+  const { data: surveyPeriods = [] } = useQuery({
+    queryKey: ["survey-periods"],
+    queryFn: surveyPeriodApi.getAllSurveyPeriods,
+  });
+
+  const stats = {
+    academicAdvisors: users.filter((u) => u.role === UserRole.ACADEMIC_ADVISOR)
+      .length,
+    subjects: subjects.filter((s) => s.isActive).length,
+    groups: groups.length,
+    gradingPeriods: gradingPeriods.filter((gp) => gp.isActive).length,
+    surveys: surveys.filter((s) => s.isActive).length,
+    surveyPeriods: surveyPeriods.filter((sp) => sp.isActive).length,
+  };
 
   const menuItems = [
     {
-      title: "Академсоветники",
-      description: "Создание и управление академсоветниками",
+      title: "Академ советники",
+      description: "Создание и управление академ советниками",
       href: "/super-admin/academic-advisor",
       icon: Users,
       color: "bg-blue-500 hover:bg-blue-600",
-      count: academicCouncil.length,
+      count: stats.academicAdvisors,
     },
     {
       title: "Дисциплины",
@@ -70,15 +82,15 @@ export default function SuperAdminDashboard() {
       href: "/super-admin/subjects",
       icon: BookOpen,
       color: "bg-green-500 hover:bg-green-600",
-      count: subjects.filter((s) => s.isActive).length,
+      count: stats.subjects,
     },
     {
       title: "Группы",
-      description: "Создание и управление учебными группами",
+      description: "Создание учебных групп",
       href: "/super-admin/groups",
       icon: GraduationCap,
       color: "bg-purple-500 hover:bg-purple-600",
-      count: groups.length,
+      count: stats.groups,
     },
     {
       title: "Периоды оценок",
@@ -86,7 +98,7 @@ export default function SuperAdminDashboard() {
       href: "/super-admin/grading-periods",
       icon: Calendar,
       color: "bg-orange-500 hover:bg-orange-600",
-      count: 0, // Добавим позже
+      count: stats.gradingPeriods,
     },
     {
       title: "Опросники",
@@ -94,7 +106,7 @@ export default function SuperAdminDashboard() {
       href: "/super-admin/surveys",
       icon: ClipboardList,
       color: "bg-indigo-500 hover:bg-indigo-600",
-      count: surveys.filter((s) => s.isActive).length,
+      count: stats.surveys,
     },
     {
       title: "Периоды опросов",
@@ -102,7 +114,7 @@ export default function SuperAdminDashboard() {
       href: "/super-admin/survey-periods",
       icon: FileText,
       color: "bg-pink-500 hover:bg-pink-600",
-      count: activeSurveyPeriods.length,
+      count: stats.surveyPeriods,
     },
     {
       title: "Отчеты и аналитика",
@@ -110,6 +122,7 @@ export default function SuperAdminDashboard() {
       href: "/super-admin/reports",
       icon: BarChart3,
       color: "bg-cyan-500 hover:bg-cyan-600",
+      count: null,
     },
     {
       title: "Системные настройки",
@@ -117,53 +130,144 @@ export default function SuperAdminDashboard() {
       href: "/super-admin/settings",
       icon: Settings,
       color: "bg-gray-500 hover:bg-gray-600",
+      count: null,
     },
   ];
 
-  // Вычисляем дополнительную статистику
-  const totalStudentsInGroups = groups.reduce(
-    (total, group) => total + (group.studentIds?.length || 0),
-    0
-  );
+  interface RecentAction {
+    type: string;
+    title: string;
+    description: string;
+    time: string;
+    icon: React.ComponentType<{ className?: string }>;
+    color: string;
+  }
 
-  const recentActions = [
-    {
-      id: 1,
-      action: "Создан новый опросник",
-      target: "Оценка преподавания",
-      time: "2 часа назад",
-      type: "survey",
-      icon: ClipboardList,
-      color: "text-indigo-600",
-    },
-    {
-      id: 2,
-      action: "Добавлена дисциплина",
-      target: "Математический анализ",
-      time: "1 день назад",
-      type: "subject",
-      icon: BookOpen,
-      color: "text-green-600",
-    },
-    {
-      id: 3,
-      action: "Создана группа",
-      target: "ИТ-21-1",
-      time: "2 дня назад",
-      type: "group",
-      icon: GraduationCap,
-      color: "text-purple-600",
-    },
-    {
-      id: 4,
-      action: "Активирован академсоветник",
-      target: "Иванов И.И.",
-      time: "3 дня назад",
-      type: "user",
-      icon: Users,
-      color: "text-blue-600",
-    },
-  ];
+  const recentActions = React.useMemo((): RecentAction[] => {
+    const actions: RecentAction[] = [];
+
+    const recentUsers = users
+      .filter((u) => u.role !== UserRole.SUPER_ADMIN)
+      .sort(
+        (a, b) =>
+          new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
+      )
+      .slice(0, 3);
+
+    recentUsers.forEach((user) => {
+      actions.push({
+        type: "user_created",
+        title: `Новый ${
+          user.role === UserRole.ACADEMIC_ADVISOR
+            ? "академ советник"
+            : user.role === UserRole.TEACHER
+            ? "преподаватель"
+            : user.role === UserRole.STUDENT
+            ? "студент"
+            : "пользователь"
+        }`,
+        description: `${user.name} (${user.email})`,
+        time: user.$createdAt,
+        icon: Users,
+        color: user.isActive
+          ? "text-green-600 bg-green-100"
+          : "text-yellow-600 bg-yellow-100",
+      });
+    });
+
+    const recentSubjects = subjects
+      .sort(
+        (a, b) =>
+          new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
+      )
+      .slice(0, 2);
+
+    recentSubjects.forEach((subject) => {
+      actions.push({
+        type: "subject_created",
+        title: "Новая дисциплина",
+        description: subject.title,
+        time: subject.$createdAt,
+        icon: BookOpen,
+        color: "text-blue-600 bg-blue-100",
+      });
+    });
+
+    const recentGroups = groups
+      .sort(
+        (a, b) =>
+          new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
+      )
+      .slice(0, 2);
+
+    recentGroups.forEach((group) => {
+      actions.push({
+        type: "group_created",
+        title: "Новая группа",
+        description: `${group.title} (${
+          group.studentIds?.length || 0
+        } студентов)`,
+        time: group.$createdAt,
+        icon: GraduationCap,
+        color: "text-purple-600 bg-purple-100",
+      });
+    });
+
+    const recentSurveys = surveys
+      .sort(
+        (a, b) =>
+          new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
+      )
+      .slice(0, 2);
+
+    recentSurveys.forEach((survey) => {
+      actions.push({
+        type: "survey_created",
+        title: "Новый опросник",
+        description: survey.title,
+        time: survey.$createdAt,
+        icon: ClipboardList,
+        color: "text-indigo-600 bg-indigo-100",
+      });
+    });
+
+    const recentSurveyPeriods = surveyPeriods
+      .sort(
+        (a, b) =>
+          new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
+      )
+      .slice(0, 2);
+
+    recentSurveyPeriods.forEach((period) => {
+      actions.push({
+        type: "survey_period_created",
+        title: "Новый период опроса",
+        description: period.title,
+        time: period.$createdAt,
+        icon: Clock,
+        color: "text-pink-600 bg-pink-100",
+      });
+    });
+
+    return actions
+      .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+      .slice(0, 10);
+  }, [users, subjects, groups, surveys, surveyPeriods]);
+
+  const formatTimeAgo = (dateString: string) => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return "только что";
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} мин назад`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} ч назад`;
+    if (diffInSeconds < 604800)
+      return `${Math.floor(diffInSeconds / 86400)} дн назад`;
+    return date.toLocaleDateString("ru-RU");
+  };
 
   return (
     <div className="p-6">
@@ -177,100 +281,21 @@ export default function SuperAdminDashboard() {
         </p>
       </div>
 
-      {/* Основные метрики */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <Users className="h-8 w-8 text-blue-500" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">
-                Общий контингент
-              </p>
-              <p className="text-2xl font-bold text-gray-900">
-                {allUsers.length}
-              </p>
-              <p className="text-xs text-gray-500">
-                Всех пользователей в системе
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <BookOpen className="h-8 w-8 text-green-500" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">
-                Активные дисциплины
-              </p>
-              <p className="text-2xl font-bold text-gray-900">
-                {subjects.filter((s) => s.isActive).length}
-              </p>
-              <p className="text-xs text-gray-500">
-                из {subjects.length} всего
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <GraduationCap className="h-8 w-8 text-purple-500" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">
-                Учебные группы
-              </p>
-              <p className="text-2xl font-bold text-gray-900">
-                {groups.length}
-              </p>
-              <p className="text-xs text-gray-500">
-                {totalStudentsInGroups} студентов в группах
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <ClipboardList className="h-8 w-8 text-indigo-500" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">
-                Активные опросы
-              </p>
-              <p className="text-2xl font-bold text-gray-900">
-                {activeSurveyPeriods.length}
-              </p>
-              <p className="text-xs text-gray-500">
-                из {surveys.length} опросников
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Быстрые действия */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {menuItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className={`${item.color} text-white p-6 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105 hover:shadow-lg`}
+            className={`${item.color} text-white p-6 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105 hover:shadow-lg relative overflow-hidden`}
           >
             <div className="flex items-center justify-between mb-4">
               <item.icon className="h-8 w-8" />
               <div className="text-right">
-                {item.count !== undefined && (
-                  <div className="text-2xl font-bold">{item.count}</div>
+                {item.count !== null && (
+                  <div className="bg-white bg-opacity-20 rounded-full px-2 py-1 text-sm font-bold mt-1 w-15 ">
+                    {item.count}
+                  </div>
                 )}
-                {/* <div className="text-xs opacity-75">СуперАдмин</div> */}
               </div>
             </div>
 
@@ -278,235 +303,209 @@ export default function SuperAdminDashboard() {
             <p className="text-sm opacity-90 leading-relaxed">
               {item.description}
             </p>
+
+            {/* Индикатор активности */}
+            {item.count !== null && item.count > 0 && (
+              <div className="absolute top-2 right-2">
+                <div className="w-3 h-3 bg-white bg-opacity-30 rounded-full animate-pulse"></div>
+              </div>
+            )}
           </Link>
         ))}
       </div>
 
-      {/* Нижняя секция с уведомлениями и активностью */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Требуют внимания */}
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <AlertTriangle className="h-6 w-6 text-orange-500" />
-            Требуют внимания
-          </h2>
+      {/* Быстрая статистика */}
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          Быстрая статистика
+        </h2>
 
-          <div className="space-y-4">
-            {pendingUsers.length > 0 && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <div className="flex items-center">
-                  <Clock className="h-5 w-5 text-yellow-600 mr-3" />
-                  <div>
-                    <h3 className="text-sm font-medium text-yellow-800">
-                      Пользователи ожидают активации
-                    </h3>
-                    <p className="text-sm text-yellow-700">
-                      {pendingUsers.length} новых пользователей требуют
-                      активации
-                    </p>
-                  </div>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div className="bg-white p-6 rounded-lg shadow border">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <Users className="h-8 w-8 text-blue-500" />
               </div>
-            )}
-
-            {academicCouncil.filter((a) => !a.isActive).length > 0 && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-center">
-                  <Users className="h-5 w-5 text-blue-600 mr-3" />
-                  <div>
-                    <h3 className="text-sm font-medium text-blue-800">
-                      Неактивные академсоветники
-                    </h3>
-                    <p className="text-sm text-blue-700">
-                      {academicCouncil.filter((a) => !a.isActive).length}{" "}
-                      академсоветников не активированы
-                    </p>
-                  </div>
-                </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">
+                  Академ советники
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.academicAdvisors}
+                </p>
               </div>
-            )}
+            </div>
+          </div>
 
-            {subjects.filter((s) => !s.isActive).length > 0 && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <div className="flex items-center">
-                  <BookOpen className="h-5 w-5 text-red-600 mr-3" />
-                  <div>
-                    <h3 className="text-sm font-medium text-red-800">
-                      Неактивные дисциплины
-                    </h3>
-                    <p className="text-sm text-red-700">
-                      {subjects.filter((s) => !s.isActive).length} дисциплин
-                      деактивированы
-                    </p>
-                  </div>
-                </div>
+          <div className="bg-white p-6 rounded-lg shadow border">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <BookOpen className="h-8 w-8 text-green-500" />
               </div>
-            )}
-
-            {groups.filter((g) => !g.studentIds || g.studentIds.length === 0)
-              .length > 0 && (
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                <div className="flex items-center">
-                  <GraduationCap className="h-5 w-5 text-purple-600 mr-3" />
-                  <div>
-                    <h3 className="text-sm font-medium text-purple-800">
-                      Пустые группы
-                    </h3>
-                    <p className="text-sm text-purple-700">
-                      {
-                        groups.filter(
-                          (g) => !g.studentIds || g.studentIds.length === 0
-                        ).length
-                      }{" "}
-                      групп без студентов
-                    </p>
-                  </div>
-                </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Дисциплины</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.subjects}
+                </p>
               </div>
-            )}
+            </div>
+          </div>
 
-            {[
-              pendingUsers,
-              academicCouncil.filter((a) => !a.isActive),
-              subjects.filter((s) => !s.isActive),
-              groups.filter((g) => !g.studentIds || g.studentIds.length === 0),
-            ].every((arr) => arr.length === 0) && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <div className="flex items-center">
-                  <TrendingUp className="h-5 w-5 text-green-600 mr-3" />
-                  <div>
-                    <h3 className="text-sm font-medium text-green-800">
-                      Все в порядке
-                    </h3>
-                    <p className="text-sm text-green-700">
-                      Нет задач, требующих немедленного внимания
-                    </p>
+          <div className="bg-white p-6 rounded-lg shadow border">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <GraduationCap className="h-8 w-8 text-purple-500" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Группы</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.groups}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow border">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <ClipboardList className="h-8 w-8 text-indigo-500" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">
+                  Активные опросы
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.surveys}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow border">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <FileText className="h-8 w-8 text-pink-500" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">
+                  Периоды опросов
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.surveyPeriods}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Последние действия */}
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          Последние действия
+        </h2>
+
+        <div className="bg-white rounded-lg shadow border">
+          <div className="p-6">
+            {recentActions.length > 0 ? (
+              <div className="space-y-4">
+                {recentActions.map((action, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    <div className={`p-2 rounded-full ${action.color}`}>
+                      <action.icon className="h-4 w-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900">
+                        {action.title}
+                      </p>
+                      <p className="text-sm text-gray-600 truncate">
+                        {action.description}
+                      </p>
+                    </div>
+                    <div className="text-xs text-gray-500 whitespace-nowrap">
+                      {formatTimeAgo(action.time)}
+                    </div>
                   </div>
-                </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <RefreshCw className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500">
+                  Здесь будут отображаться последние действия в системе
+                </p>
               </div>
             )}
           </div>
         </div>
+      </div>
 
-        {/* Последние действия */}
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <Activity className="h-6 w-6 text-blue-500" />
-            Последние действия
-          </h2>
+      {/* Информационные блоки */}
+      <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-blue-900 mb-3">
+            Основные функции СуперАдмина
+          </h3>
+          <ul className="space-y-2 text-blue-800">
+            <li>• Создание и управление академсоветниками</li>
+            <li>• Создание дисциплин и учебных групп</li>
+            <li>• Настройка периодов оценивания</li>
+            <li>• Создание опросников для студентов</li>
+            <li>• Управление периодами проведения опросов</li>
+            <li>• Просмотр отчетов и аналитики</li>
+            <li>• Управление системными настройками</li>
+          </ul>
+        </div>
 
-          <div className="bg-white rounded-lg shadow border">
-            <div className="divide-y divide-gray-200">
-              {recentActions.map((action) => (
-                <div key={action.id} className="p-4">
-                  <div className="flex items-center space-x-3">
-                    <div className={`flex-shrink-0 ${action.color}`}>
-                      <action.icon className="h-5 w-5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900">
-                        {action.action}
-                      </p>
-                      <p className="text-sm text-gray-500 truncate">
-                        {action.target}
-                      </p>
-                    </div>
-                    <div className="flex-shrink-0 text-xs text-gray-400">
-                      {action.time}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+        <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-green-900 mb-3">
+            Рекомендации по работе
+          </h3>
+          <ul className="space-y-2 text-green-800">
+            <li>• Сначала создайте академ советников</li>
+            <li>• Затем настройте дисциплины и группы</li>
+            <li>• Создайте опросники и периоды опросов</li>
+            <li>• Назначение студентов производится академсоветниками</li>
+            <li>• Регулярно проверяйте отчеты системы</li>
+            <li>• Создавайте резервные копии данных</li>
+            <li>• Мониторьте активность пользователей</li>
+          </ul>
+        </div>
+      </div>
 
-            <div className="px-4 py-3 bg-gray-50 text-center">
+      {/* Статус неактивированных пользователей */}
+      {users.filter((u) => !u.isActive && u.role !== UserRole.SUPER_ADMIN)
+        .length > 0 && (
+        <div className="mt-6">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="flex items-center">
+              <UserCheck className="h-5 w-5 text-yellow-600 mr-3" />
+              <div>
+                <h3 className="text-sm font-medium text-yellow-800">
+                  Требуется внимание
+                </h3>
+                <p className="text-sm text-yellow-700">
+                  {
+                    users.filter(
+                      (u) => !u.isActive && u.role !== UserRole.SUPER_ADMIN
+                    ).length
+                  }{" "}
+                  пользователей ожидают активации.
+                </p>
+              </div>
               <Link
-                href="/super-admin/activity-log"
-                className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+                href="/super-admin/academic-advisor"
+                className="ml-auto text-sm text-yellow-600 hover:text-yellow-800 font-medium"
               >
-                Посмотреть все действия →
+                Просмотреть
               </Link>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Дополнительная статистика */}
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          Системная аналитика
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow border">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Распределение пользователей
-            </h3>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Академсоветники:</span>
-                <span className="font-medium">{academicCouncil.length}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Преподаватели:</span>
-                <span className="font-medium">
-                  {allUsers.filter((u) => u.role === "TEACHER").length}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Студенты:</span>
-                <span className="font-medium">
-                  {allUsers.filter((u) => u.role === "STUDENT").length}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow border">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Контент системы
-            </h3>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Опросники:</span>
-                <span className="font-medium">{surveys.length}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Дисциплины:</span>
-                <span className="font-medium">{subjects.length}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Учебные группы:</span>
-                <span className="font-medium">{groups.length}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow border">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Системная активность
-            </h3>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Активные опросы:</span>
-                <span className="font-medium">
-                  {activeSurveyPeriods.length}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">
-                  Ожидают активации:
-                </span>
-                <span className="font-medium">{pendingUsers.length}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Всего действий:</span>
-                <span className="font-medium">{recentActions.length}+</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

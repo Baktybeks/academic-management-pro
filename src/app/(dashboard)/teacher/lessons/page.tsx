@@ -385,7 +385,9 @@ export default function TeacherLessonsPage() {
 
                       <div className="text-xs text-gray-500">
                         Создано:{" "}
-                        {new Date(lesson.createdAt).toLocaleDateString("ru-RU")}
+                        {new Date(lesson.$createdAt).toLocaleDateString(
+                          "ru-RU"
+                        )}
                       </div>
                     </div>
                   </div>

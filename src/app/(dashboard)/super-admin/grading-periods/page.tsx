@@ -363,7 +363,7 @@ export default function SuperAdminGradingPeriodsPage() {
                         <strong>Окончание:</strong> {formatDate(period.endDate)}
                       </div>
                       <div>
-                        <strong>Создан:</strong> {formatDate(period.createdAt)}
+                        <strong>Создан:</strong> {formatDate(period.$createdAt)}
                       </div>
                     </div>
                   </div>

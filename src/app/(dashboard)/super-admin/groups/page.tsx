@@ -253,7 +253,7 @@ export default function SuperAdminGroupsPage() {
                 {(group.studentIds?.length || 0) > 0 && (
                   <div className="mt-3 p-2 bg-green-50 rounded text-xs text-green-700">
                     В группе есть студенты. Управление составом группы доступно
-                    академсоветникам.
+                    академ советникам.
                   </div>
                 )}
               </div>
@@ -304,8 +304,8 @@ export default function SuperAdminGroupsPage() {
 
                 <div className="p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
                   <p>
-                    <strong>Примечание:</strong> После создания группы
-                    академсоветники смогут назначить в неё студентов и управлять
+                    <strong>Примечание:</strong> После создания группы академ
+                    советники смогут назначить в неё студентов и управлять
                     составом.
                   </p>
                 </div>

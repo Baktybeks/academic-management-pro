@@ -405,7 +405,7 @@ export default function AcademicCouncilAssignmentsPage() {
 
                           <div className="text-xs text-gray-500 mb-3">
                             Создано:{" "}
-                            {new Date(assignment.createdAt).toLocaleDateString(
+                            {new Date(assignment.$createdAt).toLocaleDateString(
                               "ru-RU"
                             )}
                           </div>

@@ -302,7 +302,7 @@ export default function TeacherCreateAssignmentPage() {
               Нет доступных групп и дисциплин
             </h3>
             <p className="text-gray-500 mb-6">
-              Обратитесь к академсоветнику для назначения вам групп и дисциплин
+              Обратитесь к академ советнику для назначения вам групп и дисциплин
             </p>
             <button
               onClick={handleBack}

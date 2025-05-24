@@ -43,7 +43,7 @@ export function middleware(request: NextRequest) {
     return redirectByRole(user.role, request);
   }
 
-  // Академсоветник - доступ к маршрутам /academic-advisor
+  // Академ советник - доступ к маршрутам /academic-advisor
   if (
     path.startsWith("/academic-advisor") &&
     user.role !== UserRole.ACADEMIC_ADVISOR

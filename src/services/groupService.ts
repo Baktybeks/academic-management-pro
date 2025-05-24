@@ -17,7 +17,6 @@ export interface GroupUpdateDto {
 }
 
 export const groupApi = {
-  // Получить все группы
   getAllGroups: async (): Promise<Group[]> => {
     try {
       const response = await databases.listDocuments(

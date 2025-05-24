@@ -43,7 +43,7 @@ export function Navbar() {
           { href: "/super-admin", label: "Главная", icon: Home },
           {
             href: "/super-admin/academic-advisor",
-            label: "Академсоветники",
+            label: "Академ советники",
             icon: Users,
           },
           {
@@ -136,7 +136,7 @@ export function Navbar() {
       case UserRole.SUPER_ADMIN:
         return "СуперАдмин";
       case UserRole.ACADEMIC_ADVISOR:
-        return "Академсоветник";
+        return "Академ советник";
       case UserRole.TEACHER:
         return "Преподаватель";
       case UserRole.STUDENT:

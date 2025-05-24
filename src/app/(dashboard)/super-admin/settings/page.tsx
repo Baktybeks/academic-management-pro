@@ -390,7 +390,7 @@ export default function SuperAdminSettingsPage() {
                     >
                       <option value="STUDENT">Студент</option>
                       <option value="TEACHER">Преподаватель</option>
-                      <option value="ACADEMIC_ADVISOR">Академсоветник</option>
+                      <option value="ACADEMIC_ADVISOR">Академ советник</option>
                     </select>
                   </div>
 

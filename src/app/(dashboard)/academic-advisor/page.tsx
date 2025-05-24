@@ -1,5 +1,3 @@
-// src/app/(dashboard)/academic-advisor/page.tsx
-
 "use client";
 
 import React from "react";
@@ -36,7 +34,6 @@ import {
 export default function AcademicCouncilDashboard() {
   const { user } = useAuthStore();
 
-  // Получение данных для статистики
   const { data: teachers = [] } = useTeachers();
   const { data: students = [] } = useStudents();
   const { data: pendingUsers = [] } = usePendingUsers();
@@ -61,7 +58,6 @@ export default function AcademicCouncilDashboard() {
     queryFn: surveyPeriodApi.getActiveSurveyPeriods,
   });
 
-  // Вычисляем статистику
   const stats = {
     activeTeachers: teachers.filter((t) => t.isActive).length,
     totalTeachers: teachers.length,
@@ -152,7 +148,6 @@ export default function AcademicCouncilDashboard() {
     },
   ];
 
-  // Последние действия (демо-данные)
   const recentActions = [
     {
       id: 1,
@@ -292,7 +287,7 @@ export default function AcademicCouncilDashboard() {
                 {item.count !== undefined && (
                   <div className="text-2xl font-bold">{item.count}</div>
                 )}
-                <div className="text-xs opacity-75">Академсоветник</div>
+                <div className="text-xs opacity-75">Академ советник</div>
               </div>
             </div>
 

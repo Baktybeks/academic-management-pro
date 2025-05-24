@@ -99,7 +99,7 @@ export default function AcademicCouncilActivationPage() {
   const getRoleLabel = (role: UserRole) => {
     switch (role) {
       case UserRole.ACADEMIC_ADVISOR:
-        return "Академсоветник";
+        return "Академ советник";
       case UserRole.TEACHER:
         return "Преподаватель";
       case UserRole.STUDENT:

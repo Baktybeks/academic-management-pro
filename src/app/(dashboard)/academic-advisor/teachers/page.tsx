@@ -257,7 +257,7 @@ export default function AcademicCouncilTeachersPage() {
                         <div className="flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
                           Создан:{" "}
-                          {new Date(teacher.createdAt).toLocaleDateString(
+                          {new Date(teacher.$createdAt).toLocaleDateString(
                             "ru-RU"
                           )}
                         </div>

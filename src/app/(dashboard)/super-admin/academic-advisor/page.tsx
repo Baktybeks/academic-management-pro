@@ -1,5 +1,3 @@
-// src/app/(dashboard)/super-admin/academic-advisor/page.tsx
-
 "use client";
 
 import React, { useState } from "react";
@@ -11,7 +9,7 @@ import {
   useActivateUser,
   useDeactivateUser,
 } from "@/services/authService";
-import { User, UserRole } from "@/types";
+import { User, UserRole, UserRoleLabels } from "@/types";
 import { toast } from "react-toastify";
 import {
   Plus,
@@ -33,15 +31,10 @@ export default function SuperAdminAcademicCouncilPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
 
-  // Получение академсоветников
   const { data: academicCouncilMembers = [], isLoading } = useAcademicCouncil();
-
-  // Мутации
   const createUserMutation = useCreateUser();
   const activateMutation = useActivateUser();
   const deactivateMutation = useDeactivateUser();
-
-  // Фильтрация академсоветников
   const filteredMembers = academicCouncilMembers.filter((member) => {
     const matchesSearch =
       member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -74,7 +67,7 @@ export default function SuperAdminAcademicCouncilPage() {
       {
         onSuccess: () => {
           setIsCreateModalOpen(false);
-          toast.success("Академсоветник успешно создан");
+          toast.success("Академ советник успешно создан");
           (e.target as HTMLFormElement).reset();
         },
         onError: (error) => {
@@ -87,7 +80,7 @@ export default function SuperAdminAcademicCouncilPage() {
   const handleActivate = (member: User) => {
     activateMutation.mutate(member.$id, {
       onSuccess: () => {
-        toast.success(`Академсоветник ${member.name} активирован`);
+        toast.success(`Академ советник ${member.name} активирован`);
       },
       onError: (error) => {
         toast.error(`Ошибка при активации: ${error.message}`);
@@ -103,7 +96,7 @@ export default function SuperAdminAcademicCouncilPage() {
     ) {
       deactivateMutation.mutate(member.$id, {
         onSuccess: () => {
-          toast.success(`Академсоветник ${member.name} деактивирован`);
+          toast.success(`Академ советник ${member.name} деактивирован`);
         },
         onError: (error) => {
           toast.error(`Ошибка при деактивации: ${error.message}`);
@@ -120,7 +113,7 @@ export default function SuperAdminAcademicCouncilPage() {
     return (
       <div className="p-6">
         <div className="flex items-center justify-center h-64">
-          <div className="text-lg">Загрузка академсоветников...</div>
+          <div className="text-lg">Загрузка академ советников...</div>
         </div>
       </div>
     );
@@ -138,7 +131,6 @@ export default function SuperAdminAcademicCouncilPage() {
         </p>
       </div>
 
-      {/* Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="bg-white p-6 rounded-lg shadow border">
           <div className="flex items-center">
@@ -147,7 +139,7 @@ export default function SuperAdminAcademicCouncilPage() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">
-                Всего академсоветников
+                Всего академ советников
               </p>
               <p className="text-2xl font-bold text-gray-900">
                 {academicCouncilMembers.length}
@@ -185,7 +177,6 @@ export default function SuperAdminAcademicCouncilPage() {
         </div>
       </div>
 
-      {/* Фильтры и поиск */}
       <div className="mb-6 flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <div className="relative">
@@ -221,7 +212,6 @@ export default function SuperAdminAcademicCouncilPage() {
         </div>
       </div>
 
-      {/* Список академсоветников */}
       {filteredMembers.length > 0 ? (
         <div className="bg-white rounded-lg shadow border">
           <div className="divide-y divide-gray-200">
@@ -240,9 +230,6 @@ export default function SuperAdminAcademicCouncilPage() {
                         <h3 className="text-lg font-semibold text-gray-900">
                           {member.name}
                         </h3>
-                        <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                          Академсоветник
-                        </span>
                         <span
                           className={`px-2 py-1 text-xs rounded-full ${getStatusColor(
                             member.isActive
@@ -266,7 +253,7 @@ export default function SuperAdminAcademicCouncilPage() {
                         </div>
                         <div className="flex items-center gap-1">
                           <Shield className="h-4 w-4" />
-                          {member.role}
+                          {UserRoleLabels[member.role]}
                         </div>
                       </div>
                     </div>
@@ -303,8 +290,8 @@ export default function SuperAdminAcademicCouncilPage() {
           <Crown className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             {searchTerm || filterStatus !== "all"
-              ? "Академсоветники не найдены"
-              : "Нет академсоветников"}
+              ? "Академ советники не найдены"
+              : "Нет академ советников"}
           </h3>
           <p className="text-gray-500">
             {searchTerm || filterStatus !== "all"
@@ -376,7 +363,7 @@ export default function SuperAdminAcademicCouncilPage() {
                   <div className="flex items-center">
                     <Crown className="h-5 w-5 text-blue-600 mr-2" />
                     <p className="text-sm text-blue-800">
-                      Академсоветник будет создан с неактивным статусом. После
+                      Академ советник будет создан с неактивным статусом. После
                       создания вы сможете его активировать.
                     </p>
                   </div>
@@ -426,18 +413,18 @@ export default function SuperAdminAcademicCouncilPage() {
 
       {/* Информационные блоки */}
       <div className="mt-6 space-y-4">
-        {/* Информация для неактивированных академсоветников */}
+        {/* Информация для неактивированных академ советников */}
         {academicCouncilMembers.filter((m) => !m.isActive).length > 0 && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <div className="flex items-center">
               <UserX className="h-5 w-5 text-yellow-600 mr-3" />
               <div>
                 <h3 className="text-sm font-medium text-yellow-800">
-                  Неактивированные академсоветники
+                  Неактивированные академ советники
                 </h3>
                 <p className="text-sm text-yellow-700">
                   {academicCouncilMembers.filter((m) => !m.isActive).length}{" "}
-                  академсоветников ожидают активации.
+                  академ советников ожидают активации.
                 </p>
               </div>
             </div>
@@ -453,10 +440,10 @@ export default function SuperAdminAcademicCouncilPage() {
                 Рекомендации по управлению академсоветниками
               </h3>
               <div className="text-sm text-blue-700 space-y-1">
-                <p>• Создавайте академсоветников только для доверенных лиц</p>
-                <p>• Регулярно проверяйте активность академсоветников</p>
+                <p>• Создавайте академ советников только для доверенных лиц</p>
+                <p>• Регулярно проверяйте активность академ советников</p>
                 <p>• При необходимости деактивируйте неиспользуемые аккаунты</p>
-                <p>• Академсоветники имеют широкие права в системе</p>
+                <p>• Академ советники имеют широкие права в системе</p>
               </div>
             </div>
           </div>

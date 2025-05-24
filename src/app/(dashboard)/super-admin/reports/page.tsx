@@ -279,7 +279,7 @@ export default function SuperAdminReportsPage() {
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Академсоветники</span>
+              <span className="text-sm text-gray-600">Академ советники</span>
               <div className="flex items-center gap-2">
                 <div className="w-24 bg-gray-200 rounded-full h-2">
                   <div

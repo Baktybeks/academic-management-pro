@@ -8,8 +8,8 @@ export enum UserRole {
 }
 
 export const UserRoleLabels: Record<UserRole, string> = {
-  [UserRole.SUPER_ADMIN]: "Супер Админ",
-  [UserRole.ACADEMIC_ADVISOR]: "Академ. совет.",
+  [UserRole.SUPER_ADMIN]: "Супер админ",
+  [UserRole.ACADEMIC_ADVISOR]: "Академ. советник",
   [UserRole.TEACHER]: "Преподаватель",
   [UserRole.STUDENT]: "Студент",
 };
@@ -173,11 +173,27 @@ export interface UpdateGroupDto {
   studentIds?: string[];
 }
 
+export interface LessonCreateDto {
+  title: string;
+  description?: string;
+  date: string;
+  groupId: string;
+  subjectId: string;
+  teacherId: string;
+}
+
+export interface UpdateLessonDto {
+  title?: string;
+  description?: string;
+  date?: string;
+}
+
 export interface CreateAssignmentDto {
   title: string;
   description: string;
   groupId: string;
   subjectId: string;
+  teacherId: string;
   dueDate: string;
   maxScore?: number;
 }
@@ -213,6 +229,13 @@ export interface CreateSurveyDto {
   questions: string[];
 }
 
+export interface GradingPeriodCreateDto {
+  title: string;
+  description?: string;
+  startDate: string;
+  endDate: string;
+}
+
 export interface SurveyCreateDto {
   title: string;
   description: string;
@@ -226,8 +249,17 @@ export interface SurveyQuestionCreateDto {
   order?: number;
 }
 
+export interface SurveyPeriodCreateDto {
+  title: string;
+  description?: string;
+  surveyId: string;
+  startDate: string;
+  endDate: string;
+}
+
 export interface SubmitSurveyDto {
   surveyId: string;
+  studentId: string;
   teacherId: string;
   subjectId: string;
   surveyPeriodId: string;
@@ -235,6 +267,20 @@ export interface SubmitSurveyDto {
     questionId: string;
     value: number;
   }>;
+}
+
+export interface CreateSurveyResponseDto {
+  surveyId: string;
+  studentId: string;
+  teacherId: string;
+  subjectId: string;
+  surveyPeriodId: string;
+}
+
+export interface CreateSurveyAnswerDto {
+  responseId: string;
+  questionId: string;
+  value: number;
 }
 
 export interface StudentGradeInfo {
