@@ -1,4 +1,4 @@
-// src/app/(dashboard)/academic-advisor/page.tsx - ОБНОВЛЕННАЯ ВЕРСИЯ
+// src/app/(dashboard)/academic-advisor/page.tsx - ОБНОВЛЕННАЯ ВЕРСИЯ С РЕАЛЬНЫМИ ДАННЫМИ
 
 "use client";
 
@@ -15,6 +15,8 @@ import { teacherAssignmentApi } from "@/services/teacherAssignmentService";
 import { groupApi } from "@/services/groupService";
 import { subjectApi } from "@/services/subjectService";
 import { surveyPeriodApi } from "@/services/surveyPeriodService";
+import { userApi } from "@/services/userService";
+import { formatLocalDateTime } from "@/utils/dateUtils";
 import {
   Users,
   GraduationCap,
@@ -34,6 +36,18 @@ import {
   FileText,
   UsersIcon,
 } from "lucide-react";
+
+// Интерфейс для действий
+interface RecentAction {
+  id: string;
+  action: string;
+  target: string;
+  time: string;
+  type: "activation" | "user" | "group" | "assignment" | "survey";
+  icon: React.ComponentType<any>;
+  color: string;
+  createdAt: string;
+}
 
 export default function AcademicCouncilDashboard() {
   const { user } = useAuthStore();
@@ -61,6 +75,186 @@ export default function AcademicCouncilDashboard() {
     queryKey: ["active-survey-periods"],
     queryFn: surveyPeriodApi.getActiveSurveyPeriods,
   });
+
+  // Получение последних действий на основе реальных данных
+  const { data: recentActions = [] } = useQuery({
+    queryKey: ["recent-actions"],
+    queryFn: async (): Promise<RecentAction[]> => {
+      try {
+        const actions: RecentAction[] = [];
+
+        // Получаем последних активированных пользователей (последние 10 активных)
+        const allUsers = await userApi.getAllUsers();
+        const recentlyActivated = allUsers
+          .filter((u) => u.isActive && u.role !== "SUPER_ADMIN")
+          .sort(
+            (a, b) =>
+              new Date(b.$updatedAt).getTime() -
+              new Date(a.$updatedAt).getTime()
+          )
+          .slice(0, 5);
+
+        recentlyActivated.forEach((user) => {
+          actions.push({
+            id: `activation-${user.$id}`,
+            action: `Активирован ${
+              user.role === "TEACHER" ? "преподаватель" : "студент"
+            }`,
+            target: user.name,
+            time: getRelativeTime(user.$updatedAt),
+            type: "activation",
+            icon: UserCheck,
+            color: "text-green-600",
+            createdAt: user.$updatedAt,
+          });
+        });
+
+        // Получаем последние созданные группы (последние 5)
+        const recentGroups = groups
+          .sort(
+            (a, b) =>
+              new Date(b.$createdAt).getTime() -
+              new Date(a.$createdAt).getTime()
+          )
+          .slice(0, 3);
+
+        recentGroups.forEach((group) => {
+          actions.push({
+            id: `group-${group.$id}`,
+            action: "Создана группа",
+            target: group.title,
+            time: getRelativeTime(group.$createdAt),
+            type: "group",
+            icon: UsersIcon,
+            color: "text-teal-600",
+            createdAt: group.$createdAt,
+          });
+        });
+
+        // Получаем последние назначения преподавателей (последние 5)
+        const recentAssignments = assignments
+          .sort(
+            (a, b) =>
+              new Date(b.$createdAt).getTime() -
+              new Date(a.$createdAt).getTime()
+          )
+          .slice(0, 3);
+
+        for (const assignment of recentAssignments) {
+          try {
+            const teacher = teachers.find(
+              (t) => t.$id === assignment.teacherId
+            );
+            const subject = subjects.find(
+              (s) => s.$id === assignment.subjectId
+            );
+            const group = groups.find((g) => g.$id === assignment.groupId);
+
+            if (teacher && subject && group) {
+              actions.push({
+                id: `assignment-${assignment.$id}`,
+                action: "Создано назначение",
+                target: `${teacher.name} → ${subject.title} → ${group.title}`,
+                time: getRelativeTime(assignment.$createdAt),
+                type: "assignment",
+                icon: UserPlus,
+                color: "text-purple-600",
+                createdAt: assignment.$createdAt,
+              });
+            }
+          } catch (error) {
+            // Игнорируем ошибки для отдельных назначений
+          }
+        }
+
+        // Получаем последние созданные пользователи (последние 3)
+        const recentUsers = allUsers
+          .filter((u) => u.role !== "SUPER_ADMIN")
+          .sort(
+            (a, b) =>
+              new Date(b.$createdAt).getTime() -
+              new Date(a.$createdAt).getTime()
+          )
+          .slice(0, 3);
+
+        recentUsers.forEach((user) => {
+          if (!recentlyActivated.find((u) => u.$id === user.$id)) {
+            actions.push({
+              id: `user-${user.$id}`,
+              action: `Добавлен ${
+                user.role === "TEACHER" ? "преподаватель" : "студент"
+              }`,
+              target: user.name,
+              time: getRelativeTime(user.$createdAt),
+              type: "user",
+              icon: user.role === "TEACHER" ? Users : GraduationCap,
+              color:
+                user.role === "TEACHER" ? "text-blue-600" : "text-green-600",
+              createdAt: user.$createdAt,
+            });
+          }
+        });
+
+        // Получаем последние периоды опросов (последние 2)
+        const allSurveyPeriods = await surveyPeriodApi.getAllSurveyPeriods();
+        const recentSurveyPeriods = allSurveyPeriods
+          .sort(
+            (a, b) =>
+              new Date(b.$createdAt).getTime() -
+              new Date(a.$createdAt).getTime()
+          )
+          .slice(0, 2);
+
+        recentSurveyPeriods.forEach((period) => {
+          actions.push({
+            id: `survey-${period.$id}`,
+            action: period.isActive ? "Активирован опрос" : "Создан опрос",
+            target: period.title,
+            time: getRelativeTime(period.$createdAt),
+            type: "survey",
+            icon: ClipboardList,
+            color: "text-pink-600",
+            createdAt: period.$createdAt,
+          });
+        });
+
+        // Сортируем все действия по времени создания и возвращаем последние 8
+        return actions
+          .sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
+          .slice(0, 8);
+      } catch (error) {
+        console.error("Ошибка при получении последних действий:", error);
+        return [];
+      }
+    },
+    enabled: teachers.length > 0 && groups.length > 0 && subjects.length > 0,
+  });
+
+  // Функция для получения относительного времени
+  const getRelativeTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMinutes = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60)
+    );
+
+    if (diffInMinutes < 1) return "только что";
+    if (diffInMinutes < 60) return `${diffInMinutes} мин назад`;
+
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours} ч назад`;
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) return `${diffInDays} дн назад`;
+
+    const diffInWeeks = Math.floor(diffInDays / 7);
+    if (diffInWeeks < 4) return `${diffInWeeks} нед назад`;
+
+    return formatLocalDateTime(dateString).split(" ")[0]; // Только дата
+  };
 
   const stats = {
     activeTeachers: teachers.filter((t) => t.isActive).length,
@@ -159,45 +353,6 @@ export default function AcademicCouncilDashboard() {
       href: "/academic-advisor/reports",
       icon: FileText,
       color: "bg-gray-500 hover:bg-gray-600",
-    },
-  ];
-
-  const recentActions = [
-    {
-      id: 1,
-      action: "Активирован преподаватель",
-      target: "Иванов И.И.",
-      time: "2 часа назад",
-      type: "activation",
-      icon: UserCheck,
-      color: "text-green-600",
-    },
-    {
-      id: 2,
-      action: "Создано назначение",
-      target: "Петров П.П. → Математика → ИТ-21-1",
-      time: "4 часа назад",
-      type: "assignment",
-      icon: UserPlus,
-      color: "text-purple-600",
-    },
-    {
-      id: 3,
-      action: "Добавлен студент",
-      target: "Сидоров С.С.",
-      time: "1 день назад",
-      type: "student",
-      icon: GraduationCap,
-      color: "text-blue-600",
-    },
-    {
-      id: 4,
-      action: "Создана группа",
-      target: "ИТ-21-3",
-      time: "2 дня назад",
-      type: "group",
-      icon: UsersIcon,
-      color: "text-teal-600",
     },
   ];
 
@@ -422,37 +577,49 @@ export default function AcademicCouncilDashboard() {
           </h2>
 
           <div className="bg-white rounded-lg shadow border">
-            <div className="divide-y divide-gray-200">
-              {recentActions.map((action) => (
-                <div key={action.id} className="p-4">
-                  <div className="flex items-center space-x-3">
-                    <div className={`flex-shrink-0 ${action.color}`}>
-                      <action.icon className="h-5 w-5" />
+            {recentActions.length > 0 ? (
+              <>
+                <div className="divide-y divide-gray-200">
+                  {recentActions.map((action) => (
+                    <div key={action.id} className="p-4">
+                      <div className="flex items-center space-x-3">
+                        <div className={`flex-shrink-0 ${action.color}`}>
+                          <action.icon className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900">
+                            {action.action}
+                          </p>
+                          <p className="text-sm text-gray-500 truncate">
+                            {action.target}
+                          </p>
+                        </div>
+                        <div className="flex-shrink-0 text-xs text-gray-400">
+                          {action.time}
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900">
-                        {action.action}
-                      </p>
-                      <p className="text-sm text-gray-500 truncate">
-                        {action.target}
-                      </p>
-                    </div>
-                    <div className="flex-shrink-0 text-xs text-gray-400">
-                      {action.time}
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            <div className="px-4 py-3 bg-gray-50 text-center">
-              <Link
-                href="/academic-advisor/activity-log"
-                className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
-              >
-                Посмотреть все действия →
-              </Link>
-            </div>
+                <div className="px-4 py-3 bg-gray-50 text-center">
+                  <Link
+                    href="/academic-advisor/activity-log"
+                    className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+                  >
+                    Посмотреть все действия →
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <div className="p-8 text-center">
+                <Clock className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500 text-lg">Нет последних действий</p>
+                <p className="text-gray-400 text-sm">
+                  Начните создавать пользователей и группы
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -478,15 +645,19 @@ export default function AcademicCouncilDashboard() {
                       className="bg-blue-500 h-2 rounded-full"
                       style={{
                         width: `${
-                          (stats.activeTeachers / stats.totalTeachers) * 100
+                          stats.totalTeachers > 0
+                            ? (stats.activeTeachers / stats.totalTeachers) * 100
+                            : 0
                         }%`,
                       }}
                     ></div>
                   </div>
                   <span className="text-sm font-medium">
-                    {Math.round(
-                      (stats.activeTeachers / stats.totalTeachers) * 100
-                    )}
+                    {stats.totalTeachers > 0
+                      ? Math.round(
+                          (stats.activeTeachers / stats.totalTeachers) * 100
+                        )
+                      : 0}
                     %
                   </span>
                 </div>
@@ -499,15 +670,19 @@ export default function AcademicCouncilDashboard() {
                       className="bg-green-500 h-2 rounded-full"
                       style={{
                         width: `${
-                          (stats.activeStudents / stats.totalStudents) * 100
+                          stats.totalStudents > 0
+                            ? (stats.activeStudents / stats.totalStudents) * 100
+                            : 0
                         }%`,
                       }}
                     ></div>
                   </div>
                   <span className="text-sm font-medium">
-                    {Math.round(
-                      (stats.activeStudents / stats.totalStudents) * 100
-                    )}
+                    {stats.totalStudents > 0
+                      ? Math.round(
+                          (stats.activeStudents / stats.totalStudents) * 100
+                        )
+                      : 0}
                     %
                   </span>
                 </div>
