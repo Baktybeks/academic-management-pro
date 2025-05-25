@@ -11,6 +11,11 @@ import { attendanceApi } from "@/services/attendanceService";
 import { subjectApi } from "@/services/subjectService";
 import { groupApi } from "@/services/groupService";
 import { userApi } from "@/services/userService";
+import {
+  formatLocalDateTime,
+  convertLocalDateTimeToISO,
+  isPastDate,
+} from "@/utils/dateUtils";
 import Link from "next/link";
 import {
   Lesson,
@@ -64,12 +69,12 @@ export default function TeacherLessonsPage() {
   });
 
   // Получаем дополнительные данные
-  const { data: subjects = [] } = useQuery({
+  const { data: allSubjects = [] } = useQuery({
     queryKey: ["subjects"],
     queryFn: subjectApi.getAllSubjects,
   });
 
-  const { data: groups = [] } = useQuery({
+  const { data: allGroups = [] } = useQuery({
     queryKey: ["groups"],
     queryFn: groupApi.getAllGroups,
   });
@@ -78,6 +83,19 @@ export default function TeacherLessonsPage() {
     queryKey: ["students"],
     queryFn: () => userApi.getUsersByRole("STUDENT" as any),
   });
+
+  // Фильтруем только дисциплины и группы преподавателя
+  const subjects = React.useMemo(() => {
+    const teacherSubjectIds = new Set(
+      teacherAssignments.map((a) => a.subjectId)
+    );
+    return allSubjects.filter((subject) => teacherSubjectIds.has(subject.$id));
+  }, [allSubjects, teacherAssignments]);
+
+  const groups = React.useMemo(() => {
+    const teacherGroupIds = new Set(teacherAssignments.map((a) => a.groupId));
+    return allGroups.filter((group) => teacherGroupIds.has(group.$id));
+  }, [allGroups, teacherAssignments]);
 
   // Создание занятия
   const createMutation = useMutation({
@@ -107,18 +125,18 @@ export default function TeacherLessonsPage() {
 
   // Создаем карты для быстрого доступа
   const subjectsMap = React.useMemo(() => {
-    return subjects.reduce((acc, subject) => {
+    return allSubjects.reduce((acc, subject) => {
       acc[subject.$id] = subject;
       return acc;
     }, {} as Record<string, Subject>);
-  }, [subjects]);
+  }, [allSubjects]);
 
   const groupsMap = React.useMemo(() => {
-    return groups.reduce((acc, group) => {
+    return allGroups.reduce((acc, group) => {
       acc[group.$id] = group;
       return acc;
     }, {} as Record<string, Group>);
-  }, [groups]);
+  }, [allGroups]);
 
   // Группируем назначения по комбинациям группа-дисциплина
   const groupSubjectCombinations = React.useMemo(() => {
@@ -180,10 +198,14 @@ export default function TeacherLessonsPage() {
 
     const formData = new FormData(e.currentTarget);
 
+    // Используем утилиту для правильной конвертации времени
+    const localDateTime = formData.get("date") as string;
+    const isoString = convertLocalDateTimeToISO(localDateTime);
+
     const data: LessonCreateDto = {
       title: formData.get("title") as string,
       description: (formData.get("description") as string) || undefined,
-      date: formData.get("date") as string,
+      date: isoString,
       groupId: selectedGroupSubject.groupId,
       subjectId: selectedGroupSubject.subjectId,
       teacherId: user?.$id || "",
@@ -205,20 +227,13 @@ export default function TeacherLessonsPage() {
     }
   };
 
+  // Используем утилиты для форматирования дат
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return (
-      date.toLocaleDateString("ru-RU") +
-      " " +
-      date.toLocaleTimeString("ru-RU", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    );
+    return formatLocalDateTime(dateString);
   };
 
   const isLessonPast = (dateString: string) => {
-    return new Date(dateString) < new Date();
+    return isPastDate(dateString);
   };
 
   return (

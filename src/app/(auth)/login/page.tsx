@@ -262,7 +262,6 @@ function LoginPageFallback() {
   );
 }
 
-// Главный экспортируемый компонент
 export default function LoginPage() {
   return (
     <Layout title="Вход в систему">

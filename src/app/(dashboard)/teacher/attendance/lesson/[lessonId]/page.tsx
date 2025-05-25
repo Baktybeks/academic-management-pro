@@ -24,6 +24,7 @@ import {
   Clock,
   RotateCcw,
 } from "lucide-react";
+import { formatLocalDateTime } from "@/utils/dateUtils";
 
 export default function TeacherLessonAttendancePage() {
   const router = useRouter();
@@ -68,7 +69,9 @@ export default function TeacherLessonAttendancePage() {
       );
 
       const studentsData = await Promise.all(studentPromises);
-      return studentsData.filter(Boolean) as User[];
+      return studentsData.filter(
+        (student): student is NonNullable<typeof student> => student !== null
+      ); // ← Исправленная строка
     },
     enabled: !!group?.studentIds && group.studentIds.length > 0,
   });
@@ -174,15 +177,7 @@ export default function TeacherLessonAttendancePage() {
   }, [students, attendanceData]);
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return (
-      date.toLocaleDateString("ru-RU") +
-      " " +
-      date.toLocaleTimeString("ru-RU", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    );
+    return formatLocalDateTime(dateString);
   };
 
   if (lessonLoading) {

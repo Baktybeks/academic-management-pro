@@ -158,7 +158,6 @@ export function Navbar() {
 
       case UserRole.TEACHER:
         return [
-          { href: "/teacher", label: "Главная", icon: Home },
           { href: "/teacher/assignments", label: "Задания", icon: FileText },
           { href: "/teacher/lessons", label: "Занятия", icon: Calendar },
           {
@@ -227,7 +226,8 @@ export function Navbar() {
 
   return (
     <nav className="bg-white shadow-lg border-b relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 b1400:px-8">
+      {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 b1400:px-8"> */}
+      <div className="container mx-auto px-4 sm:px-6 b1400:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center">
