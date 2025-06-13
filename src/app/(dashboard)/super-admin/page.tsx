@@ -301,7 +301,7 @@ export default function SuperAdminDashboard() {
             className={`${item.color} text-white p-6 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105 hover:shadow-lg relative overflow-hidden`}
           >
             <div className="flex items-center justify-between mb-4">
-              <item.icon className="h-8 w-8" />
+              <item.icon className="h-8 w-8 text-white" />
               <div className="text-right">
                 {item.count !== null && (
                   <div className="bg-white bg-opacity-20 rounded-full px-2 py-1 text-sm font-bold mt-1 w-15 ">
@@ -333,7 +333,7 @@ export default function SuperAdminDashboard() {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-          <div className="bg-[EBF4FE] p-6 rounded-lg shadow border-[6699FF]">
+          <div className="bg-[#EBF4FE] p-6 rounded-lg shadow border-[#6699FF]">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <Users className="h-8 w-8 text-blue-500" />
@@ -349,7 +349,7 @@ export default function SuperAdminDashboard() {
             </div>
           </div>
 
-          <div className="bg-[EBF4FE] p-6 rounded-lg shadow border-[6699FF]">
+          <div className="bg-[#EBF4FE] p-6 rounded-lg shadow border-[#6699FF]">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <BookOpen className="h-8 w-8 text-green-500" />
@@ -363,7 +363,7 @@ export default function SuperAdminDashboard() {
             </div>
           </div>
 
-          <div className="bg-[EBF4FE] p-6 rounded-lg shadow border-[6699FF]">
+          <div className="bg-[#EBF4FE] p-6 rounded-lg shadow border-[#6699FF]">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <GraduationCap className="h-8 w-8 text-purple-500" />
@@ -377,7 +377,7 @@ export default function SuperAdminDashboard() {
             </div>
           </div>
 
-          <div className="bg-[EBF4FE] p-6 rounded-lg shadow border-[6699FF]">
+          <div className="bg-[#EBF4FE] p-6 rounded-lg shadow border-[#6699FF]">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <ClipboardList className="h-8 w-8 text-indigo-500" />
@@ -393,7 +393,7 @@ export default function SuperAdminDashboard() {
             </div>
           </div>
 
-          <div className="bg-[EBF4FE] p-6 rounded-lg shadow border-[6699FF]">
+          <div className="bg-[#EBF4FE] p-6 rounded-lg shadow border-[#6699FF]">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <FileText className="h-8 w-8 text-pink-500" />
@@ -417,7 +417,7 @@ export default function SuperAdminDashboard() {
           Последние действия
         </h2>
 
-        <div className="bg-white rounded-lg shadow border-[6699FF]">
+        <div className="bg-white rounded-lg shadow border-[#6699FF]">
           <div className="p-6">
             {recentActions.length > 0 ? (
               <div className="space-y-4">

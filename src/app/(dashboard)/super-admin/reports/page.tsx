@@ -151,7 +151,7 @@ export default function SuperAdminReportsPage() {
           </select>
         </div>
 
-        <div className="flex gap-2 ml-auto">
+        {/* <div className="flex gap-2 ml-auto">
           <button
             onClick={() => handleExport("pdf")}
             className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
@@ -173,7 +173,7 @@ export default function SuperAdminReportsPage() {
             <Download className="h-4 w-4" />
             CSV
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Основная статистика */}

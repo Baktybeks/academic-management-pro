@@ -136,14 +136,33 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 relative">
+     <div className="min-h-screen flex">
+       <div className="bg-[#0055FF33] flex-1 relative hidden md:block">
+       <div 
+          className="fixed z-0"
+          style={{
+          width: '1024px',
+          height: '955px',
+          top: '0',
+          left: '0'
+          }}
+      >
+         <img 
+            src={img.src} 
+            alt="Фон авторизации"
+            className="w-full h-full object-cover"
+        />
+</div>
+      
+      </div>
+      <div className="flex-1 flex items-center justify-center bg-gray-50 p-4 relative">
        <div 
           className="fixed z-0"
           style={{
           width: '740px',
           height: '810px',
-          top: '-105px',
-          right: '412px'
+          top: '-145px',
+          right: '-85px'
           }}
       >
          <img 
@@ -257,6 +276,7 @@ function LoginForm() {
             </p>
           </div>
         </form>
+      </div>
       </div>
     </div>
   );
