@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { UserRole } from "@/types";
 import Layout from "@/components/common/Layout";
+const img = require('../../../../public/auth-bg.png').default;
 import { toast } from "react-toastify";
 import { CheckCircle, Clock, AlertTriangle, Info } from "lucide-react";
 
@@ -135,8 +136,23 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 relative">
+       <div 
+          className="fixed z-0"
+          style={{
+          width: '740px',
+          height: '810px',
+          top: '-105px',
+          right: '412px'
+          }}
+      >
+         <img 
+            src={img.src} 
+            alt="Фон авторизации"
+            className="w-full h-full object-cover"
+        />
+</div>
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md relative z-1">
         <div className="text-center">
           <h1 className="text-3xl font-extrabold text-gray-900">
             Вход в систему
