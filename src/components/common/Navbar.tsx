@@ -225,7 +225,7 @@ export function Navbar() {
   const navigationItems = getNavigationItems();
 
   return (
-    <nav className="bg-white shadow-lg border-b relative">
+    <nav className="bg-[#EBF4FE] shadow-none border-none relative">
       {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 b1400:px-8"> */}
       <div className="container mx-auto px-4 sm:px-6 b1400:px-8">
         <div className="flex justify-between h-16">

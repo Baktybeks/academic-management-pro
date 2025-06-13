@@ -92,7 +92,7 @@ export default function StudentDashboardPage() {
 
       {/* Быстрая статистика */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Users className="h-8 w-8 text-blue-500" />
@@ -106,7 +106,7 @@ export default function StudentDashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <FileText className="h-8 w-8 text-green-500" />
@@ -120,7 +120,7 @@ export default function StudentDashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <CheckCircle className="h-8 w-8 text-green-500" />
@@ -134,7 +134,7 @@ export default function StudentDashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <BarChart3 className="h-8 w-8 text-indigo-500" />
@@ -222,7 +222,7 @@ export default function StudentDashboardPage() {
             {studentGroups.map((group) => (
               <div
                 key={group.$id}
-                className="bg-white border rounded-lg shadow-sm p-4"
+                className="bg-white  border-[6699FF] rounded-lg shadow-sm p-4"
               >
                 <div className="flex items-center gap-3 mb-2">
                   <Users className="h-5 w-5 text-gray-500" />
@@ -252,7 +252,7 @@ export default function StudentDashboardPage() {
         </h2>
 
         {recentSubmissions.length > 0 ? (
-          <div className="bg-white rounded-lg shadow border">
+          <div className="bg-white rounded-lg shadow border-[6699FF]">
             <div className="divide-y divide-gray-200">
               {recentSubmissions.map((submission) => (
                 <div key={submission.$id} className="p-4">
@@ -310,7 +310,7 @@ export default function StudentDashboardPage() {
             </div>
           </div>
         ) : (
-          <div className="text-center py-12 bg-white rounded-lg shadow border">
+          <div className="text-center py-12 bg-white rounded-lg shadow border-[6699FF]">
             <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               Нет отправленных работ
@@ -320,8 +320,8 @@ export default function StudentDashboardPage() {
             </p>
             <Link
               href="/student/assignments"
-              className="mt-4 inline-block px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-            >
+             className="mt-4 inline-block px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+           style={{color: '#ffff'}} >
               Посмотреть задания
             </Link>
           </div>
@@ -334,7 +334,7 @@ export default function StudentDashboardPage() {
 
         <div className="space-y-3">
           {submissionStats.unchecked > 0 && (
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+            <div className="bg-orange-50  border-[6699FF] border-orange-200 rounded-lg p-4">
               <div className="flex items-center">
                 <AlertCircle className="h-5 w-5 text-orange-600 mr-3" />
                 <div>

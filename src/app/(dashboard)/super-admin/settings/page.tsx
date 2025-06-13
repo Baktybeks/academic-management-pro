@@ -157,7 +157,7 @@ export default function SuperAdminSettingsPage() {
       </div>
 
       {/* Импорт/Экспорт */}
-      <div className="mb-6 bg-white p-4 rounded-lg shadow border">
+      <div className="mb-6 bg-white p-4 rounded-lg shadow border-[6699FF]">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-1">
@@ -191,7 +191,7 @@ export default function SuperAdminSettingsPage() {
 
       <div className="flex gap-8">
         {/* Боковое меню */}
-        <div className="w-64 bg-white rounded-lg shadow border p-4">
+        <div className="w-64 bg-white rounded-lg shadow border-[6699FF] p-4">
           <nav className="space-y-2">
             {tabs.map((tab) => (
               <button
@@ -199,7 +199,7 @@ export default function SuperAdminSettingsPage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`w-full flex items-center gap-3 px-3 py-2 text-left rounded-md transition-colors ${
                   activeTab === tab.id
-                    ? "bg-indigo-100 text-indigo-700 border border-indigo-200"
+                    ? "bg-indigo-100 text-indigo-700 border-[6699FF] border-indigo-200"
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
@@ -214,7 +214,7 @@ export default function SuperAdminSettingsPage() {
         <div className="flex-1">
           {/* Общие настройки */}
           {activeTab === "general" && (
-            <div className="bg-white rounded-lg shadow border p-6">
+            <div className="bg-white rounded-lg shadow border-[6699FF] p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-gray-900">
                   Общие настройки
@@ -357,7 +357,7 @@ export default function SuperAdminSettingsPage() {
 
           {/* Настройки пользователей */}
           {activeTab === "users" && (
-            <div className="bg-white rounded-lg shadow border p-6">
+            <div className="bg-white rounded-lg shadow border-[6699FF] p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-gray-900">
                   Настройки пользователей
@@ -501,7 +501,7 @@ export default function SuperAdminSettingsPage() {
 
           {/* Настройки уведомлений */}
           {activeTab === "notifications" && (
-            <div className="bg-white rounded-lg shadow border p-6">
+            <div className="bg-white rounded-lg shadow border-[6699FF] p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-gray-900">
                   Настройки уведомлений
@@ -706,7 +706,7 @@ export default function SuperAdminSettingsPage() {
 
           {/* Академические настройки */}
           {activeTab === "academic" && (
-            <div className="bg-white rounded-lg shadow border p-6">
+            <div className="bg-white rounded-lg shadow border-[6699FF] p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-gray-900">
                   Настройки учебного процесса
@@ -853,7 +853,7 @@ export default function SuperAdminSettingsPage() {
 
           {/* Настройки безопасности */}
           {activeTab === "security" && (
-            <div className="bg-white rounded-lg shadow border p-6">
+            <div className="bg-white rounded-lg shadow border-[6699FF] p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-gray-900">
                   Настройки безопасности
@@ -1019,7 +1019,7 @@ export default function SuperAdminSettingsPage() {
       </div>
 
       {/* Статус системы */}
-      <div className="mt-8 bg-white rounded-lg shadow border p-6">
+      <div className="mt-8 bg-white rounded-lg shadow border-[6699FF] p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
           <Database className="h-5 w-5 text-green-500" />
           Статус системы

@@ -221,7 +221,7 @@ export default function SuperAdminGradingPeriodsPage() {
 
       {/* Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Calendar className="h-8 w-8 text-blue-500" />
@@ -237,7 +237,7 @@ export default function SuperAdminGradingPeriodsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Play className="h-8 w-8 text-green-500" />
@@ -251,7 +251,7 @@ export default function SuperAdminGradingPeriodsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Clock className="h-8 w-8 text-yellow-500" />
@@ -271,7 +271,7 @@ export default function SuperAdminGradingPeriodsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Award className="h-8 w-8 text-purple-500" />
@@ -318,7 +318,7 @@ export default function SuperAdminGradingPeriodsPage() {
 
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2  bg-[#0055FF] text-white rounded-md hover:bg-[#0044CC] transition-colors"
           >
             <Plus className="h-4 w-4" />
             Создать период
@@ -332,7 +332,7 @@ export default function SuperAdminGradingPeriodsPage() {
           {filteredPeriods.map((period) => (
             <div
               key={period.$id}
-              className="bg-white border rounded-lg shadow-sm"
+              className="bg-white border-[6699FF] rounded-lg shadow-sm"
             >
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
@@ -419,7 +419,7 @@ export default function SuperAdminGradingPeriodsPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow border">
+        <div className="text-center py-12 bg-white rounded-lg shadow border-[6699FF]">
           <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             {searchTerm || filterStatus !== "all"
@@ -434,7 +434,7 @@ export default function SuperAdminGradingPeriodsPage() {
           {!searchTerm && filterStatus === "all" && (
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+              className="mt-4 px-4 py-2 bg-[#0055FF] text-white rounded-md hover:bg-[#0044CC] transition-colors"
             >
               Создать период
             </button>
@@ -485,7 +485,7 @@ function GradingPeriodModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-gray bg-opacity-30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
         <form onSubmit={onSubmit}>
           <div className="p-6">

@@ -528,7 +528,7 @@ export default function TeacherGradesPage() {
         {viewMode === "final" && (
           <div className="mb-4">
             {activePeriod ? (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="bg-blue-50 border-[6699FF] border-blue-200 rounded-lg p-4">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-5 w-5 text-blue-600" />
                   <div>
@@ -569,7 +569,7 @@ export default function TeacherGradesPage() {
 
       {/* Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Users className="h-8 w-8 text-blue-500" />
@@ -583,7 +583,7 @@ export default function TeacherGradesPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <FileText className="h-8 w-8 text-green-500" />
@@ -599,7 +599,7 @@ export default function TeacherGradesPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <TrendingUp className="h-8 w-8 text-purple-500" />
@@ -613,7 +613,7 @@ export default function TeacherGradesPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Award className="h-8 w-8 text-yellow-500" />
@@ -629,7 +629,7 @@ export default function TeacherGradesPage() {
       </div>
 
       {/* Фильтры */}
-      <div className="mb-6 bg-white p-4 rounded-lg shadow border">
+      <div className="mb-6 bg-white p-4 rounded-lg shadow border-[6699FF]">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -696,7 +696,7 @@ export default function TeacherGradesPage() {
       {viewMode === "final" ? (
         /* Финальные оценки */
         activePeriod ? (
-          <div className="bg-white rounded-lg shadow border">
+          <div className="bg-white rounded-lg shadow border-[6699FF]">
             <div className="p-6 border-b border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900">
                 Финальные оценки - {activePeriod.title}
@@ -872,7 +872,7 @@ export default function TeacherGradesPage() {
             )}
           </div>
         ) : (
-          <div className="text-center py-12 bg-white rounded-lg shadow border">
+          <div className="text-center py-12 bg-white rounded-lg shadow border-[6699FF]">
             <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               Нет активного периода оценок
@@ -889,7 +889,7 @@ export default function TeacherGradesPage() {
           {studentGrades.map((studentData) => (
             <div
               key={studentData.student.$id}
-              className="bg-white border rounded-lg shadow-sm"
+              className="bg-white border-[6699FF] rounded-lg shadow-sm"
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -963,7 +963,7 @@ export default function TeacherGradesPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow border">
+        <div className="text-center py-12 bg-white rounded-lg shadow border-[6699FF]">
           <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             Оценок не найдено

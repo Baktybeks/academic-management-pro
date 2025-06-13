@@ -243,7 +243,7 @@ export default function TeacherSubmissionsPage() {
       </div>
 
       {/* Фильтры */}
-      <div className="mb-6 bg-white p-4 rounded-lg shadow border">
+      <div className="mb-6 bg-white p-4 rounded-lg shadow border-[6699FF]">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -316,7 +316,7 @@ export default function TeacherSubmissionsPage() {
             return (
               <div
                 key={submission.$id}
-                className={`bg-white border rounded-lg shadow-sm ${
+                className={`bg-white border-[6699FF] rounded-lg shadow-sm ${
                   !submission.isChecked ? "border-l-4 border-l-orange-400" : ""
                 }`}
               >
@@ -432,7 +432,7 @@ export default function TeacherSubmissionsPage() {
           })}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow border">
+        <div className="text-center py-12 bg-white rounded-lg shadow border-[6699FF]">
           <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             Работ не найдено

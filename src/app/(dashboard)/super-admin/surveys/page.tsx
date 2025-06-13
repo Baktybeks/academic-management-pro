@@ -272,7 +272,7 @@ export default function SuperAdminSurveysPage() {
 
       {/* Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <ClipboardList className="h-8 w-8 text-blue-500" />
@@ -288,7 +288,7 @@ export default function SuperAdminSurveysPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Eye className="h-8 w-8 text-green-500" />
@@ -302,7 +302,7 @@ export default function SuperAdminSurveysPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <EyeOff className="h-8 w-8 text-red-500" />
@@ -345,7 +345,7 @@ export default function SuperAdminSurveysPage() {
 
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-[#0055FF] text-white rounded-md hover:bg-[#0044CC] transition-colors"
           >
             <Plus className="h-4 w-4" />
             Создать опросник
@@ -359,7 +359,7 @@ export default function SuperAdminSurveysPage() {
           {filteredSurveys.map((survey) => (
             <div
               key={survey.$id}
-              className="bg-white border rounded-lg shadow-sm"
+              className="bg-white border-[6699FF] rounded-lg shadow-sm"
             >
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
@@ -450,7 +450,7 @@ export default function SuperAdminSurveysPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow border">
+        <div className="text-center py-12 bg-white rounded-lg shadow border-[6699FF]">
           <ClipboardList className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             {searchTerm || filterStatus !== "all"
@@ -465,7 +465,7 @@ export default function SuperAdminSurveysPage() {
           {!searchTerm && filterStatus === "all" && (
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+              className="mt-4 px-4 py-2 bg-[#0055FF] text-white rounded-md hover:bg-[#0044CC] transition-colors"
             >
               Создать опросник
             </button>
@@ -484,7 +484,7 @@ export default function SuperAdminSurveysPage() {
 
       {/* Модальное окно редактирования */}
       {editingSurvey && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+       <div className="fixed inset-0 bg-gray bg-opacity-30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
             <form onSubmit={handleEditSubmit}>
               <div className="p-6">
@@ -668,7 +668,7 @@ function CreateSurveyModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-gray bg-opacity-30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <div className="p-6">
