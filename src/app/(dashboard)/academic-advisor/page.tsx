@@ -370,7 +370,7 @@ export default function AcademicCouncilDashboard() {
 
       {/* Основные метрики */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Users className="h-8 w-8 text-blue-500" />
@@ -389,7 +389,7 @@ export default function AcademicCouncilDashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <GraduationCap className="h-8 w-8 text-green-500" />
@@ -408,7 +408,7 @@ export default function AcademicCouncilDashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <UsersIcon className="h-8 w-8 text-teal-500" />
@@ -425,7 +425,7 @@ export default function AcademicCouncilDashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <UserPlus className="h-8 w-8 text-purple-500" />
@@ -452,21 +452,21 @@ export default function AcademicCouncilDashboard() {
             className={`${item.color} text-white p-6 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105 hover:shadow-lg`}
           >
             <div className="flex items-center justify-between mb-4">
-              <item.icon className="h-8 w-8" />
+              <item.icon className="h-8 w-8 text-white" />
               <div className="text-right">
                 {item.count !== undefined && (
-                  <div className="text-2xl font-bold">{item.count}</div>
+                  <div className="text-2xl font-bold mb-2 text-white">{item.count}</div>
                 )}
-                <div className="text-xs opacity-75">Академ советник</div>
+                <div className="text-xs opacity-75 text-white">Академ советник</div>
               </div>
             </div>
 
-            <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-            <p className="text-sm opacity-90 leading-relaxed">
+            <h3 className="text-xl font-bold mb-2 text-white">{item.title}</h3>
+            <p className="text-sm opacity-90 leading-relaxed text-white">
               {item.description}
             </p>
             {item.subtext && (
-              <p className="text-xs opacity-75 mt-2">{item.subtext}</p>
+              <p className="text-xs opacity-75 mt-2 text-white">{item.subtext}</p>
             )}
           </Link>
         ))}
@@ -576,7 +576,7 @@ export default function AcademicCouncilDashboard() {
             Последние действия
           </h2>
 
-          <div className="bg-white rounded-lg shadow border">
+          <div className="bg-white rounded-lg shadow border-[6699FF]">
             {recentActions.length > 0 ? (
               <>
                 <div className="divide-y divide-gray-200">
@@ -632,7 +632,7 @@ export default function AcademicCouncilDashboard() {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow border">
+          <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Эффективность активации
             </h3>
@@ -690,7 +690,7 @@ export default function AcademicCouncilDashboard() {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow border">
+          <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Покрытие назначениями
             </h3>
@@ -714,7 +714,7 @@ export default function AcademicCouncilDashboard() {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow border">
+          <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Организация студентов
             </h3>

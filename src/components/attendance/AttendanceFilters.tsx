@@ -38,7 +38,7 @@ export function AttendanceFilters({
   onExport,
 }: AttendanceFiltersProps) {
   return (
-    <div className="mb-6 bg-white p-4 rounded-lg shadow border">
+    <div className="mb-6 bg-white p-4 rounded-lg shadow border-[#6699FF]">
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -47,7 +47,7 @@ export function AttendanceFilters({
           <select
             value={viewMode}
             onChange={(e) => setViewMode(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="overview">Обзор</option>
             <option value="detailed">Детально</option>
@@ -62,7 +62,7 @@ export function AttendanceFilters({
           <select
             value={selectedGroup}
             onChange={(e) => setSelectedGroup(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="all">Все группы</option>
             {groups.map((group) => (
@@ -80,7 +80,7 @@ export function AttendanceFilters({
           <select
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="all">Все дисциплины</option>
             {subjects.map((subject) => (
@@ -98,7 +98,7 @@ export function AttendanceFilters({
           <select
             value={selectedTeacher}
             onChange={(e) => setSelectedTeacher(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="all">Все преподаватели</option>
             {teachers.map((teacher) => (
@@ -116,7 +116,7 @@ export function AttendanceFilters({
           <select
             value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="week">Неделя</option>
             <option value="month">Месяц</option>

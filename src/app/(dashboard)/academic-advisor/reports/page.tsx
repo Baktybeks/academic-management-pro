@@ -384,7 +384,7 @@ export default function AcademicAdvisorReportsPage() {
       </div>
 
       {/* Фильтры и настройки */}
-      <div className="mb-6 bg-white p-4 rounded-lg shadow border">
+      <div className="mb-6 bg-white p-4 rounded-lg shadow border-[#6699FF]">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -393,7 +393,7 @@ export default function AcademicAdvisorReportsPage() {
             <select
               value={selectedReport}
               onChange={(e) => setSelectedReport(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               {reportTypes.map((type) => (
                 <option key={type.id} value={type.id}>
@@ -410,7 +410,7 @@ export default function AcademicAdvisorReportsPage() {
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="month">Месяц</option>
               <option value="semester">Семестр</option>
@@ -425,7 +425,7 @@ export default function AcademicAdvisorReportsPage() {
             <select
               value={selectedGroup}
               onChange={(e) => setSelectedGroup(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="all">Все группы</option>
               {groups.map((group) => (
@@ -453,7 +453,7 @@ export default function AcademicAdvisorReportsPage() {
         <div className="space-y-6">
           {/* Ключевые метрики */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow border">
+            <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <GraduationCap className="h-8 w-8 text-blue-500" />
@@ -470,7 +470,7 @@ export default function AcademicAdvisorReportsPage() {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow border">
+            <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <Users className="h-8 w-8 text-green-500" />
@@ -489,7 +489,7 @@ export default function AcademicAdvisorReportsPage() {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow border">
+            <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <BookOpen className="h-8 w-8 text-purple-500" />
@@ -504,7 +504,7 @@ export default function AcademicAdvisorReportsPage() {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow border">
+            <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <Target className="h-8 w-8 text-orange-500" />
@@ -524,7 +524,7 @@ export default function AcademicAdvisorReportsPage() {
 
           {/* Краткая сводка */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-lg shadow border p-6">
+            <div className="bg-white rounded-lg shadow border-[#6699FF] p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Ключевые показатели
               </h3>
@@ -566,7 +566,7 @@ export default function AcademicAdvisorReportsPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow border p-6">
+            <div className="bg-white rounded-lg shadow border-[#6699FF] p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Статус заданий
               </h3>
@@ -623,7 +623,7 @@ export default function AcademicAdvisorReportsPage() {
       {selectedReport === "attendance" && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow border">
+            <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Общая посещаемость
               </h3>
@@ -662,7 +662,7 @@ export default function AcademicAdvisorReportsPage() {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow border">
+            <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 По группам
               </h3>
@@ -701,7 +701,7 @@ export default function AcademicAdvisorReportsPage() {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow border">
+            <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 По дисциплинам
               </h3>
@@ -738,7 +738,7 @@ export default function AcademicAdvisorReportsPage() {
 
           {/* Детальная таблица посещаемости */}
           {attendanceRecords.length > 0 && (
-            <div className="bg-white rounded-lg shadow border p-6">
+            <div className="bg-white rounded-lg shadow border-[#6699FF] p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">
                   Детальная посещаемость ({attendanceRecords.length} записей)
@@ -832,7 +832,7 @@ export default function AcademicAdvisorReportsPage() {
       {selectedReport === "teachers" && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-lg shadow border p-6">
+            <div className="bg-white rounded-lg shadow border-[#6699FF] p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Нагрузка преподавателей
               </h3>
@@ -879,7 +879,7 @@ export default function AcademicAdvisorReportsPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow border p-6">
+            <div className="bg-white rounded-lg shadow border-[#6699FF] p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Статистика назначений
               </h3>
@@ -959,7 +959,7 @@ export default function AcademicAdvisorReportsPage() {
           </div>
 
           {/* Распределение заданий по дисциплинам */}
-          <div className="bg-white rounded-lg shadow border p-6">
+          <div className="bg-white rounded-lg shadow border-[#6699FF] p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Задания по дисциплинам
             </h3>
@@ -968,7 +968,7 @@ export default function AcademicAdvisorReportsPage() {
                 .filter((item) => item.count > 0)
                 .sort((a, b) => b.count - a.count)
                 .map((item, index) => (
-                  <div key={index} className="p-4 border rounded-lg">
+                  <div key={index} className="p-4 border-[#6699FF] rounded-lg">
                     <h4 className="font-medium text-gray-900 mb-2">
                       {item.subject}
                     </h4>
@@ -1012,7 +1012,7 @@ export default function AcademicAdvisorReportsPage() {
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Сравнение групп */}
-            <div className="bg-white rounded-lg shadow border p-6">
+            <div className="bg-white rounded-lg shadow border-[#6699FF] p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Сравнение групп
               </h3>
@@ -1063,7 +1063,7 @@ export default function AcademicAdvisorReportsPage() {
             </div>
 
             {/* Активность по дисциплинам */}
-            <div className="bg-white rounded-lg shadow border p-6">
+            <div className="bg-white rounded-lg shadow border-[#6699FF] p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Активность по дисциплинам
               </h3>
@@ -1128,7 +1128,7 @@ export default function AcademicAdvisorReportsPage() {
           </div>
 
           {/* Общая сводка */}
-          <div className="bg-white rounded-lg shadow border p-6">
+          <div className="bg-white rounded-lg shadow border-[#6699FF] p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Сводка по эффективности
             </h3>
@@ -1191,7 +1191,7 @@ export default function AcademicAdvisorReportsPage() {
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Статистика заданий */}
-            <div className="bg-white rounded-lg shadow border p-6">
+            <div className="bg-white rounded-lg shadow border-[#6699FF] p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Статистика заданий
               </h3>
@@ -1268,7 +1268,7 @@ export default function AcademicAdvisorReportsPage() {
             </div>
 
             {/* Задания по дисциплинам */}
-            <div className="bg-white rounded-lg shadow border p-6">
+            <div className="bg-white rounded-lg shadow border-[#6699FF] p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Задания по дисциплинам
               </h3>
@@ -1306,7 +1306,7 @@ export default function AcademicAdvisorReportsPage() {
           </div>
 
           {/* Статистика по группам */}
-          <div className="bg-white rounded-lg shadow border p-6">
+          <div className="bg-white rounded-lg shadow border-[#6699FF] p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Статистика по группам
             </h3>
@@ -1332,7 +1332,7 @@ export default function AcademicAdvisorReportsPage() {
                     : 0;
 
                 return (
-                  <div key={group.$id} className="p-4 border rounded-lg">
+                  <div key={group.$id} className="p-4 border-[#6699FF] rounded-lg">
                     <h4 className="font-medium text-gray-900 mb-2">
                       {group.title}
                     </h4>
@@ -1379,7 +1379,7 @@ export default function AcademicAdvisorReportsPage() {
       )}
 
       {/* Экспорт отчетов */}
-      <div className="bg-white rounded-lg shadow border p-6 mt-8">
+      <div className="bg-white rounded-lg shadow border-[#6699FF] p-6 mt-8">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Экспорт отчетов
         </h3>
@@ -1427,7 +1427,7 @@ export default function AcademicAdvisorReportsPage() {
       </div>
 
       {/* Рекомендации */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-8">
+      <div className="bg-blue-50 border-[#6699FF] border-blue-200 rounded-lg p-6 mt-8">
         <h3 className="text-lg font-semibold text-blue-900 mb-4 flex items-center gap-2">
           <CheckCircle className="h-5 w-5" />
           Рекомендации на основе данных
@@ -1521,7 +1521,7 @@ export default function AcademicAdvisorReportsPage() {
         </div>
 
         {/* Общая оценка системы */}
-        <div className="mt-6 p-4 bg-white rounded-lg border">
+        <div className="mt-6 p-4 bg-white rounded-lg border-[#6699FF]">
           <h4 className="font-medium text-gray-900 mb-3">
             Общая оценка системы
           </h4>

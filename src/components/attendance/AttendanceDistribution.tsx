@@ -77,7 +77,7 @@ export function AttendanceDistribution({ stats }: AttendanceDistributionProps) {
   const maxPercentage = Math.max(...distributionData.map((d) => d.percentage));
 
   return (
-    <div className="mb-6 bg-white rounded-lg shadow border p-6">
+    <div className="mb-6 bg-white rounded-lg shadow border-[#6699FF] p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
           <BarChart3 className="h-5 w-5 text-indigo-500" />
@@ -90,7 +90,7 @@ export function AttendanceDistribution({ stats }: AttendanceDistributionProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {distributionData.map((item, index) => (
-          <div key={index} className={`${item.bgColor} p-4 rounded-lg border`}>
+          <div key={index} className={`${item.bgColor} p-4 rounded-lg border-[#6699FF]`}>
             <div className="flex items-center justify-between mb-2">
               <div className={`w-3 h-3 ${item.color} rounded-full`}></div>
               <span className="text-sm font-medium text-gray-600">
@@ -196,7 +196,7 @@ export function AttendanceDistribution({ stats }: AttendanceDistributionProps) {
               </span>
             </div>
 
-            <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="p-3 bg-blue-50 rounded-lg border-[#6699FF] border-blue-200">
               <div className="text-sm text-blue-800">
                 <strong>Цель:</strong> Поддерживать среднюю посещаемость выше
                 85% и минимизировать количество студентов с низкой
@@ -209,7 +209,7 @@ export function AttendanceDistribution({ stats }: AttendanceDistributionProps) {
 
       {/* Рекомендации */}
       {stats.poorAttendance > 0 && (
-        <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <div className="mt-6 p-4 bg-yellow-50 border-[#6699FF] border-yellow-200 rounded-lg">
           <h5 className="font-medium text-yellow-800 mb-2">Рекомендации</h5>
           <div className="text-sm text-yellow-700 space-y-1">
             {stats.poorAttendance > stats.totalStudents * 0.2 && (

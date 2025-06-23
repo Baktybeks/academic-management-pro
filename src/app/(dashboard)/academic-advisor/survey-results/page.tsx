@@ -341,7 +341,7 @@ export default function AcademicAdvisorSurveyResultsPage() {
 
       {/* Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <ClipboardList className="h-8 w-8 text-blue-500" />
@@ -357,7 +357,7 @@ export default function AcademicAdvisorSurveyResultsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Star className="h-8 w-8 text-yellow-500" />
@@ -374,7 +374,7 @@ export default function AcademicAdvisorSurveyResultsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Users className="h-8 w-8 text-green-500" />
@@ -393,7 +393,7 @@ export default function AcademicAdvisorSurveyResultsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Award className="h-8 w-8 text-purple-500" />
@@ -412,7 +412,7 @@ export default function AcademicAdvisorSurveyResultsPage() {
       </div>
 
       {/* Фильтры */}
-      <div className="mb-6 bg-white p-4 rounded-lg shadow border">
+      <div className="mb-6 bg-white p-4 rounded-lg shadow border-[#6699FF]">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -421,7 +421,7 @@ export default function AcademicAdvisorSurveyResultsPage() {
             <select
               value={viewMode}
               onChange={(e) => setViewMode(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="overview">Обзор</option>
               <option value="detailed">Детально</option>
@@ -436,7 +436,7 @@ export default function AcademicAdvisorSurveyResultsPage() {
             <select
               value={selectedTeacher}
               onChange={(e) => setSelectedTeacher(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="all">Все преподаватели</option>
               {teachers.map((teacher) => (
@@ -454,7 +454,7 @@ export default function AcademicAdvisorSurveyResultsPage() {
             <select
               value={selectedSubject}
               onChange={(e) => setSelectedSubject(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="all">Все дисциплины</option>
               {subjects.map((subject) => (
@@ -472,7 +472,7 @@ export default function AcademicAdvisorSurveyResultsPage() {
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="all">Все периоды</option>
               {surveyPeriods.map((period) => (
@@ -544,7 +544,7 @@ export default function AcademicAdvisorSurveyResultsPage() {
 
       {/* Основной контент */}
       {viewMode === "overview" && (
-        <div className="bg-white rounded-lg shadow border">
+        <div className="bg-white rounded-lg shadow border-[#6699FF]">
           <div className="p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Результаты опросов ({filteredResults.length})
