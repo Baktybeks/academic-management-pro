@@ -11,35 +11,27 @@ import { subjectApi } from "@/services/subjectService";
 import { groupApi } from "@/services/groupService";
 import { userApi } from "@/services/userService";
 import { gradingPeriodApi } from "@/services/gradingPeriodService";
+import { lessonApi } from "@/services/lessonService";
+import { attendanceApi } from "@/services/attendanceService";
 import {
   Assignment,
   Group,
   Subject,
   User,
   AssignmentSubmission,
+  Lesson,
+  Attendance,
   getLetterGrade,
-  getLetterGradeColor,
 } from "@/types";
-import { formatLocalDate } from "@/utils/dateUtils";
 import { toast } from "react-toastify";
 import {
-  BarChart3,
-  Users,
-  BookOpen,
-  Search,
-  Filter,
-  Download,
-  Eye,
-  Award,
-  TrendingUp,
-  Calendar,
-  FileText,
-  Star,
-  Save,
-  Edit,
-  CheckCircle,
-  AlertCircle,
-} from "lucide-react";
+  GradesStats,
+  GradesFilters,
+  GradesPeriodInfo,
+  FinalGradesTable,
+  CurrentGradesView,
+  type FinalGradeData,
+} from "@/components/grades";
 
 export default function TeacherGradesPage() {
   const { user } = useAuthStore();
@@ -92,6 +84,19 @@ export default function TeacherGradesPage() {
       return submissionArrays.flat();
     },
     enabled: assignments.length > 0,
+  });
+
+  // Получаем все занятия преподавателя
+  const { data: allLessons = [] } = useQuery({
+    queryKey: ["teacher-lessons", user?.$id],
+    queryFn: () => lessonApi.getLessonsByTeacher(user?.$id || ""),
+    enabled: !!user?.$id,
+  });
+
+  // Получаем всю посещаемость
+  const { data: allAttendance = [] } = useQuery({
+    queryKey: ["all-attendance"],
+    queryFn: attendanceApi.getAllAttendance,
   });
 
   // Получаем финальные оценки преподавателя
@@ -175,6 +180,13 @@ export default function TeacherGradesPage() {
       return acc;
     }, {} as Record<string, User>);
   }, [students]);
+
+  const lessonsMap = React.useMemo(() => {
+    return allLessons.reduce((acc, lesson) => {
+      acc[lesson.$id] = lesson;
+      return acc;
+    }, {} as Record<string, Lesson>);
+  }, [allLessons]);
 
   // Получаем уникальные дисциплины и группы преподавателя
   const teacherSubjects = React.useMemo(() => {
@@ -298,7 +310,7 @@ export default function TeacherGradesPage() {
   ]);
 
   // Данные для финальных оценок
-  const finalGradesData = React.useMemo(() => {
+  const finalGradesData = React.useMemo((): FinalGradeData[] => {
     if (viewMode !== "final") return [];
 
     // Группируем данные по комбинациям студент + предмет + группа
@@ -322,13 +334,13 @@ export default function TeacherGradesPage() {
                 fg.groupId === assignment.groupId
             );
 
-            // Вычисляем текущие баллы студента по данному предмету
+            // Вычисляем текущие баллы студента по данному предмету и группе
             const studentSubmissions = allSubmissions.filter((sub) => {
-              const assignment = assignmentsMap[sub.assignmentId];
+              const assignmentData = assignmentsMap[sub.assignmentId];
               return (
-                assignment &&
-                assignment.subjectId === assignment.subjectId &&
-                assignment.groupId === assignment.groupId &&
+                assignmentData &&
+                assignmentData.subjectId === assignment.subjectId &&
+                assignmentData.groupId === assignment.groupId &&
                 sub.studentId === studentId &&
                 sub.isChecked
               );
@@ -339,16 +351,33 @@ export default function TeacherGradesPage() {
               0
             );
             const maxScore = studentSubmissions.reduce((sum, sub) => {
-              const assignment = assignmentsMap[sub.assignmentId];
-              return sum + (assignment?.maxScore || 0);
+              const assignmentData = assignmentsMap[sub.assignmentId];
+              return sum + (assignmentData?.maxScore || 0);
             }, 0);
+
+            // Вычисляем посещаемость для данной группы и предмета
+            const subjectLessons = allLessons.filter(
+              (lesson) =>
+                lesson.subjectId === assignment.subjectId &&
+                lesson.groupId === assignment.groupId
+            );
+
+            const lessonIds = subjectLessons.map((l) => l.$id);
+            const studentAttendance = allAttendance.filter(
+              (att) =>
+                att.studentId === studentId && lessonIds.includes(att.lessonId)
+            );
+
+            const totalLessons = subjectLessons.length;
+            const attendedLessons = studentAttendance.filter(
+              (att) => att.present
+            ).length;
 
             const currentPercentage =
               maxScore > 0 ? (totalScore / maxScore) * 100 : 0;
             const currentLetterGrade = getLetterGrade(currentPercentage);
 
             const key = `${studentId}-${assignment.subjectId}-${assignment.groupId}`;
-            const editing = editingGrades[key];
 
             return {
               key,
@@ -356,15 +385,19 @@ export default function TeacherGradesPage() {
               subject,
               group,
               currentScore: totalScore,
+              maxHomeworkScore: maxScore,
               currentLetterGrade,
+              totalLessons,
+              attendedLessons,
               finalScore:
-                editing?.score ?? existingGrade?.totalScore ?? totalScore,
+                editingGrades[key]?.score ??
+                existingGrade?.totalScore ??
+                totalScore,
               finalLetterGrade:
-                editing?.letterGrade ??
+                editingGrades[key]?.letterGrade ??
                 existingGrade?.letterGrade ??
                 currentLetterGrade,
               hasExistingGrade: !!existingGrade,
-              isEditing: !!editing,
             };
           })
           .filter(Boolean);
@@ -375,7 +408,7 @@ export default function TeacherGradesPage() {
     return combinations.filter(
       (item, index, self) =>
         index === self.findIndex((t) => t!.key === item!.key)
-    ) as NonNullable<(typeof combinations)[0]>[];
+    ) as FinalGradeData[];
   }, [
     teacherAssignments,
     subjectsMap,
@@ -383,6 +416,8 @@ export default function TeacherGradesPage() {
     studentsMap,
     finalGrades,
     allSubmissions,
+    allLessons,
+    allAttendance,
     assignmentsMap,
     editingGrades,
     viewMode,
@@ -457,19 +492,20 @@ export default function TeacherGradesPage() {
     }));
   };
 
-  const handleSaveGrade = (item: (typeof finalGradesData)[0]) => {
+  const handleSaveGrade = (item: FinalGradeData) => {
     const editing = editingGrades[item.key];
-    if (!editing) return;
+    const scoreToSave = editing?.score ?? item.finalScore;
+    const letterGradeToSave = editing?.letterGrade ?? item.finalLetterGrade;
 
     saveFinalGradeMutation.mutate({
       studentId: item.student.$id,
       subjectId: item.subject.$id,
       groupId: item.group.$id,
-      totalScore: editing.score,
-      letterGrade: editing.letterGrade,
+      totalScore: scoreToSave,
+      letterGrade: letterGradeToSave,
     });
 
-    // Убираем из редактирования
+    // Убираем из редактирования после сохранения
     setEditingGrades((prev) => {
       const newState = { ...prev };
       delete newState[item.key];
@@ -484,6 +520,19 @@ export default function TeacherGradesPage() {
       return newState;
     });
   };
+
+  // Инициализируем значения для всех студентов при изменении данных
+  React.useEffect(() => {
+    finalGradesData.forEach((item) => {
+      if (!editingGrades[item.key]) {
+        const letterGrade = getLetterGrade(item.finalScore);
+        setEditingGrades((prev) => ({
+          ...prev,
+          [item.key]: { score: item.finalScore, letterGrade },
+        }));
+      }
+    });
+  }, [finalGradesData.length]); // Используем length вместо всего массива
 
   return (
     <div className="p-6">
@@ -527,453 +576,50 @@ export default function TeacherGradesPage() {
         {/* Информация о периоде */}
         {viewMode === "final" && (
           <div className="mb-4">
-            {activePeriod ? (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <h3 className="font-medium text-blue-900">
-                      {activePeriod.title}
-                    </h3>
-                    <p className="text-sm text-blue-700">
-                      Период: {formatLocalDate(activePeriod.startDate)} -{" "}
-                      {formatLocalDate(activePeriod.endDate)}
-                    </p>
-                    {activePeriod.description && (
-                      <p className="text-sm text-blue-600 mt-1">
-                        {activePeriod.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <div className="flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5 text-yellow-600" />
-                  <div>
-                    <h3 className="font-medium text-yellow-900">
-                      Нет активного периода оценок
-                    </h3>
-                    <p className="text-sm text-yellow-700">
-                      Обратитесь к супер администратору для активации периода
-                      выставления финальных оценок
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
+            <GradesPeriodInfo activePeriod={activePeriod} />
           </div>
         )}
       </div>
 
       {/* Статистика */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <Users className="h-8 w-8 text-blue-500" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Студентов</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {stats.totalStudents}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <FileText className="h-8 w-8 text-green-500" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">
-                {viewMode === "final" ? "Всего позиций" : "Всего оценок"}
-              </p>
-              <p className="text-2xl font-bold text-gray-900">
-                {stats.totalGrades}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <TrendingUp className="h-8 w-8 text-purple-500" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Средний %</p>
-              <p className={`text-2xl font-bold `}>
-                {stats.averagePercentage}%
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <Award className="h-8 w-8 text-yellow-500" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Отличных</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {stats.excellentCount}
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="mb-6">
+        <GradesStats stats={stats} viewMode={viewMode} />
       </div>
 
       {/* Фильтры */}
-      <div className="mb-6 bg-white p-4 rounded-lg shadow border">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Поиск студента
-            </label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <input
-                type="text"
-                placeholder="Имя студента..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-3 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Дисциплина
-            </label>
-            <select
-              value={selectedSubject}
-              onChange={(e) => setSelectedSubject(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-            >
-              <option value="all">Все дисциплины</option>
-              {teacherSubjects.map((subject) => (
-                <option key={subject.$id} value={subject.$id}>
-                  {subject.title}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Группа
-            </label>
-            <select
-              value={selectedGroup}
-              onChange={(e) => setSelectedGroup(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-            >
-              <option value="all">Все группы</option>
-              {teacherGroups.map((group) => (
-                <option key={group.$id} value={group.$id}>
-                  {group.title}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* <div className="flex items-end">
-            <button className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
-              <Download className="h-4 w-4" />
-              Экспорт
-            </button>
-          </div> */}
-        </div>
+      <div className="mb-6">
+        <GradesFilters
+          searchTerm={searchTerm}
+          selectedSubject={selectedSubject}
+          selectedGroup={selectedGroup}
+          teacherSubjects={teacherSubjects}
+          teacherGroups={teacherGroups}
+          onSearchChange={setSearchTerm}
+          onSubjectChange={setSelectedSubject}
+          onGroupChange={setSelectedGroup}
+        />
       </div>
 
       {/* Контент в зависимости от режима */}
       {viewMode === "final" ? (
-        /* Финальные оценки */
-        activePeriod ? (
-          <div className="bg-white rounded-lg shadow border">
-            <div className="p-6 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Финальные оценки - {activePeriod.title}
-              </h3>
-              <p className="text-sm text-gray-600 mt-1">
-                Выставите финальные оценки студентам по своим дисциплинам
-              </p>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ФИО
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Дисциплина
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Группа
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Баллы за дз
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Финальные баллы
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Оценка
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Действия
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {finalGradesData
-                    .filter((item) => {
-                      if (
-                        selectedSubject !== "all" &&
-                        item.subject.$id !== selectedSubject
-                      )
-                        return false;
-                      if (
-                        selectedGroup !== "all" &&
-                        item.group.$id !== selectedGroup
-                      )
-                        return false;
-                      if (
-                        searchTerm &&
-                        !item.student.name
-                          .toLowerCase()
-                          .includes(searchTerm.toLowerCase())
-                      )
-                        return false;
-                      return true;
-                    })
-                    .map((item) => (
-                      <tr
-                        key={item.key}
-                        className={item.hasExistingGrade ? "bg-green-50" : ""}
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mr-3">
-                              <span className="text-indigo-600 font-semibold text-sm">
-                                {item.student.name.charAt(0).toUpperCase()}
-                              </span>
-                            </div>
-                            <div>
-                              <div className="text-sm font-medium text-gray-900">
-                                {item.student.name}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                {item.student.email}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
-                            {item.subject.title}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
-                            {item.group.title}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full `}
-                          >
-                            {item.currentScore}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {item.isEditing ? (
-                            <input
-                              type="number"
-                              min="0"
-                              max="100"
-                              value={editingGrades[item.key]?.score || ""}
-                              onChange={(e) =>
-                                handleEditGrade(
-                                  item.key,
-                                  parseInt(e.target.value) || 0
-                                )
-                              }
-                              className="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                              placeholder="0-100"
-                            />
-                          ) : (
-                            <span className="text-sm font-medium text-gray-900">
-                              {item.finalScore}
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getLetterGradeColor(
-                              item.finalLetterGrade
-                            )}`}
-                          >
-                            {item.finalLetterGrade}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          {item.isEditing ? (
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => handleSaveGrade(item)}
-                                disabled={saveFinalGradeMutation.isPending}
-                                className="text-green-600 hover:text-green-900 disabled:opacity-50"
-                              >
-                                <Save className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => handleCancelEdit(item.key)}
-                                className="text-gray-600 hover:text-gray-900"
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() =>
-                                handleEditGrade(item.key, item.finalScore)
-                              }
-                              className="text-indigo-600 hover:text-indigo-900"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-
-            {finalGradesData.length === 0 && (
-              <div className="text-center py-12">
-                <Award className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Нет данных для выставления оценок
-                </h3>
-                <p className="text-gray-500">
-                  Убедитесь, что у вас есть назначения групп и дисциплин
-                </p>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="text-center py-12 bg-white rounded-lg shadow border">
-            <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Нет активного периода оценок
-            </h3>
-            <p className="text-gray-500">
-              Обратитесь к супер администратору для активации периода
-              выставления финальных оценок
-            </p>
-          </div>
-        )
-      ) : /* Текущие оценки */
-      studentGrades.length > 0 ? (
-        <div className="space-y-6">
-          {studentGrades.map((studentData) => (
-            <div
-              key={studentData.student.$id}
-              className="bg-white border rounded-lg shadow-sm"
-            >
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                      <span className="text-indigo-600 font-semibold">
-                        {studentData.student.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {studentData.student.name}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        {studentData.student.email}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="text-right">
-                    <div className={`text-2xl font-bold `}>
-                      {Math.round(studentData.averagePercentage)}%
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      {studentData.totalScore} из {studentData.maxScore} баллов
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {studentData.grades.map((grade) => (
-                    <div
-                      key={`${grade.assignment.$id}-${grade.submission.$id}`}
-                      className={`p-4 border rounded-lg `}
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-medium text-sm line-clamp-2">
-                          {grade.assignment.title}
-                        </h4>
-                        <div className="flex items-center gap-1 ml-2">
-                          <Star className="h-4 w-4" />
-                          <span className="font-bold">
-                            {grade.submission.score}/{grade.assignment.maxScore}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 text-xs text-gray-600 mb-2">
-                        <BookOpen className="h-3 w-3" />
-                        <span>{grade.subject.title}</span>
-                        <span>•</span>
-                        <span>{grade.group.title}</span>
-                      </div>
-                      {grade.submission.comment && (
-                        <div className="mt-2 text-xs text-gray-600 italic">
-                          {grade.submission.comment}
-                        </div>
-                      )}
-
-                      <div className="mt-2 text-xs text-gray-500">
-                        {new Date(
-                          grade.submission.checkedAt ||
-                            grade.submission.submittedAt
-                        ).toLocaleDateString("ru-RU")}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <FinalGradesTable
+          activePeriod={activePeriod}
+          finalGradesData={finalGradesData}
+          editingGrades={editingGrades}
+          selectedSubject={selectedSubject}
+          selectedGroup={selectedGroup}
+          searchTerm={searchTerm}
+          saveFinalGradeMutation={saveFinalGradeMutation}
+          onEditGrade={handleEditGrade}
+          onSaveGrade={handleSaveGrade}
+        />
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow border">
-          <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Оценок не найдено
-          </h3>
-          <p className="text-gray-500">
-            {searchTerm || selectedSubject !== "all" || selectedGroup !== "all"
-              ? "Попробуйте изменить фильтры поиска"
-              : "Проверьте работы студентов, чтобы увидеть оценки"}
-          </p>
-        </div>
+        <CurrentGradesView
+          studentGrades={studentGrades}
+          searchTerm={searchTerm}
+          selectedSubject={selectedSubject}
+          selectedGroup={selectedGroup}
+        />
       )}
     </div>
   );
