@@ -455,9 +455,13 @@ export default function AcademicCouncilDashboard() {
               <item.icon className="h-8 w-8 text-white" />
               <div className="text-right">
                 {item.count !== undefined && (
-                  <div className="text-2xl font-bold mb-2 text-white">{item.count}</div>
+                  <div className="text-2xl font-bold mb-2 text-white">
+                    {item.count}
+                  </div>
                 )}
-                <div className="text-xs opacity-75 text-white">Академ советник</div>
+                <div className="text-xs opacity-75 text-white">
+                  Академ советник
+                </div>
               </div>
             </div>
 
@@ -466,7 +470,9 @@ export default function AcademicCouncilDashboard() {
               {item.description}
             </p>
             {item.subtext && (
-              <p className="text-xs opacity-75 mt-2 text-white">{item.subtext}</p>
+              <p className="text-xs opacity-75 mt-2 text-white">
+                {item.subtext}
+              </p>
             )}
           </Link>
         ))}
@@ -601,7 +607,7 @@ export default function AcademicCouncilDashboard() {
                     </div>
                   ))}
                 </div>
-
+                {/* 
                 <div className="px-4 py-3 bg-gray-50 text-center">
                   <Link
                     href="/academic-advisor/activity-log"
@@ -609,7 +615,7 @@ export default function AcademicCouncilDashboard() {
                   >
                     Посмотреть все действия →
                   </Link>
-                </div>
+                </div> */}
               </>
             ) : (
               <div className="p-8 text-center">
