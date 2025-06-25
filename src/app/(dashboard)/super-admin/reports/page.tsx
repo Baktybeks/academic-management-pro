@@ -151,7 +151,7 @@ export default function SuperAdminReportsPage() {
           </select>
         </div>
 
-        <div className="flex gap-2 ml-auto">
+        {/* <div className="flex gap-2 ml-auto">
           <button
             onClick={() => handleExport("pdf")}
             className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
@@ -173,12 +173,12 @@ export default function SuperAdminReportsPage() {
             <Download className="h-4 w-4" />
             CSV
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Основная статистика */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-[#EBF4FE] p-6 rounded-lg shadow  border-[6699FF]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">
@@ -197,7 +197,7 @@ export default function SuperAdminReportsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-[#EBF4FE] p-6 rounded-lg shadow  border-[6699FF]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Учебных групп</p>
@@ -214,7 +214,7 @@ export default function SuperAdminReportsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-[#EBF4FE] p-6 rounded-lg shadow  border-[6699FF]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Дисциплин</p>
@@ -225,13 +225,13 @@ export default function SuperAdminReportsPage() {
                 {stats.subjects.active} активных
               </p>
             </div>
-            <div className="p-3 bg-green-100 rounded-full">
-              <BookOpen className="h-6 w-6 text-green-600" />
+            <div className="p-3  bg-indigo-100 rounded-full">
+              <BookOpen className="h-6 w-6 text-indigo-600" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-[#EBF4FE] p-6 rounded-lg shadow  border-[6699FF]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Опросников</p>
@@ -252,7 +252,7 @@ export default function SuperAdminReportsPage() {
       {/* Детальные отчеты */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Распределение пользователей по ролям */}
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow  border-[6699FF]">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Распределение пользователей по ролям
           </h3>
@@ -344,7 +344,7 @@ export default function SuperAdminReportsPage() {
         </div>
 
         {/* Статус активности */}
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow  border-[6699FF]">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Активность пользователей
           </h3>
@@ -408,7 +408,7 @@ export default function SuperAdminReportsPage() {
         </div>
 
         {/* Статистика групп */}
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow  border-[6699FF]">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Статистика групп
           </h3>
@@ -456,7 +456,7 @@ export default function SuperAdminReportsPage() {
         </div>
 
         {/* Статистика дисциплин и опросов */}
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow  border-[6699FF]">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Дисциплины и опросы
           </h3>
@@ -509,7 +509,7 @@ export default function SuperAdminReportsPage() {
       </div>
 
       {/* Дополнительные отчеты */}
-      <div className="mt-8">
+      {/* <div className="mt-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
           Дополнительные отчеты
         </h2>
@@ -560,7 +560,7 @@ export default function SuperAdminReportsPage() {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Последние изменения */}
       <div className="mt-8">
@@ -568,7 +568,7 @@ export default function SuperAdminReportsPage() {
           Последние изменения в системе
         </h2>
 
-        <div className="bg-white rounded-lg shadow border">
+        <div className="bg-white rounded-lg shadow  border-[6699FF]">
           <div className="p-6">
             <div className="space-y-4">
               <div className="flex items-center gap-4 p-3 bg-blue-50 rounded-lg">

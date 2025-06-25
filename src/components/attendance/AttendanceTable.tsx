@@ -125,7 +125,7 @@ export function AttendanceTable({
 
   if (records.length === 0) {
     return (
-      <div className="text-center py-12 bg-white rounded-lg shadow border">
+      <div className="text-center py-12 bg-white rounded-lg shadow border-[#6699FF]">
         <div className="text-gray-400 mb-4">
           <Users className="h-12 w-12 mx-auto" />
         </div>
@@ -141,9 +141,9 @@ export function AttendanceTable({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow border">
+    <div className="bg-white rounded-lg shadow border-[#6699FF]">
       {/* Поиск */}
-      <div className="p-4 border-b">
+      <div className="p-4 border-[#6699FF]">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <input
@@ -151,7 +151,7 @@ export function AttendanceTable({
             placeholder="Поиск по студенту, группе, дисциплине или преподавателю..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="pl-10 pr-4 py-2 w-full border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
         {searchTerm && (
@@ -346,7 +346,7 @@ export function AttendanceTable({
       </div>
 
       {/* Подвал таблицы */}
-      <div className="px-6 py-3 bg-gray-50 border-t flex items-center justify-between">
+      <div className="px-6 py-3 bg-gray-50 border-[#6699FF] flex items-center justify-between">
         <div className="text-sm text-gray-700">
           Показано {filteredAndSortedRecords.length} из {records.length} записей
         </div>

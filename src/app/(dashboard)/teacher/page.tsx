@@ -94,7 +94,7 @@ export default function TeacherDashboardPage() {
 
       {/* Быстрая статистика */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <BookOpen className="h-8 w-8 text-blue-500" />
@@ -108,7 +108,7 @@ export default function TeacherDashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Users className="h-8 w-8 text-green-500" />
@@ -122,7 +122,7 @@ export default function TeacherDashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <AlertCircle className="h-8 w-8 text-red-500" />
@@ -138,7 +138,7 @@ export default function TeacherDashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Clock className="h-8 w-8 text-orange-500" />
@@ -231,7 +231,7 @@ export default function TeacherDashboardPage() {
                 return (
                   <div
                     key={subjectId}
-                    className="bg-white rounded-lg shadow border"
+                    className="bg-white rounded-lg shadow border-[6699FF]"
                   >
                     <div className="p-6">
                       <div className="flex items-center justify-between mb-4">
@@ -259,7 +259,7 @@ export default function TeacherDashboardPage() {
                             <Link
                               key={assignment.$id}
                               href={`/teacher/group/${group.$id}/subject/${subject.$id}`}
-                              className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                              className="p-4 border-[6699FF] rounded-lg hover:bg-gray-50 transition-colors"
                             >
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
@@ -291,7 +291,7 @@ export default function TeacherDashboardPage() {
             )}
           </div>
         ) : (
-          <div className="text-center py-12 bg-white rounded-lg shadow border">
+          <div className="text-center py-12 bg-white rounded-lg shadow border-[6699FF]">
             <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               Нет назначенных дисциплин
@@ -309,7 +309,7 @@ export default function TeacherDashboardPage() {
           Последние действия
         </h2>
 
-        <div className="bg-white rounded-lg shadow border">
+        <div className="bg-white rounded-lg shadow border-[6699FF]">
           <div className="p-6">
             <p className="text-gray-500 text-center py-8">
               Здесь будет отображаться история ваших последних действий

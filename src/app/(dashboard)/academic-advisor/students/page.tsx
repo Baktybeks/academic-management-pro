@@ -138,7 +138,7 @@ export default function AcademicCouncilStudentsPage() {
 
       {/* Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <GraduationCap className="h-8 w-8 text-blue-500" />
@@ -154,7 +154,7 @@ export default function AcademicCouncilStudentsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <UserCheck className="h-8 w-8 text-green-500" />
@@ -168,7 +168,7 @@ export default function AcademicCouncilStudentsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <UserX className="h-8 w-8 text-red-500" />
@@ -193,7 +193,7 @@ export default function AcademicCouncilStudentsPage() {
               placeholder="Поиск по имени или email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="pl-10 pr-4 py-2 w-full border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
         </div>
@@ -202,7 +202,7 @@ export default function AcademicCouncilStudentsPage() {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="px-4 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="all">Все</option>
             <option value="active">Активные</option>
@@ -221,7 +221,7 @@ export default function AcademicCouncilStudentsPage() {
 
       {/* Список студентов */}
       {filteredStudents.length > 0 ? (
-        <div className="bg-white rounded-lg shadow border">
+        <div className="bg-white rounded-lg shadow border-[#6699FF]">
           <div className="divide-y divide-gray-200">
             {filteredStudents.map((student) => (
               <div key={student.$id} className="p-6">
@@ -294,7 +294,7 @@ export default function AcademicCouncilStudentsPage() {
           </div>
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow border">
+        <div className="text-center py-12 bg-white rounded-lg shadow border-[#6699FF]">
           <GraduationCap className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             {searchTerm || filterStatus !== "all"
@@ -319,7 +319,7 @@ export default function AcademicCouncilStudentsPage() {
 
       {/* Модальное окно создания студента */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+       <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
             <form onSubmit={handleCreateSubmit}>
               <div className="p-6">
@@ -335,7 +335,7 @@ export default function AcademicCouncilStudentsPage() {
                     type="text"
                     name="name"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="Введите полное имя студента"
                   />
                 </div>
@@ -348,7 +348,7 @@ export default function AcademicCouncilStudentsPage() {
                     type="email"
                     name="email"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="Введите email студента"
                   />
                 </div>
@@ -362,7 +362,7 @@ export default function AcademicCouncilStudentsPage() {
                     name="password"
                     required
                     minLength={6}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="Введите пароль (минимум 6 символов)"
                   />
                 </div>
@@ -403,7 +403,7 @@ export default function AcademicCouncilStudentsPage() {
       <div className="mt-6 space-y-4">
         {/* Информация для неактивированных студентов */}
         {students.filter((s) => !s.isActive).length > 0 && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="bg-yellow-50 border-[#6699FF] border-yellow-200 rounded-lg p-4">
             <div className="flex items-center">
               <UserX className="h-5 w-5 text-yellow-600 mr-3" />
               <div>
@@ -420,7 +420,7 @@ export default function AcademicCouncilStudentsPage() {
         )}
 
         {/* Инструкции */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="bg-blue-50 border-[#6699FF] border-blue-200 rounded-lg p-4">
           <div className="flex items-start">
             <Shield className="h-5 w-5 text-blue-600 mr-3 mt-0.5" />
             <div>

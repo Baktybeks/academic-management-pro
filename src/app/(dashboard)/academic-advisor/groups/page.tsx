@@ -597,7 +597,7 @@ export default function AcademicAdvisorGroupsPage() {
 
       {/* Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Users className="h-8 w-8 text-blue-500" />
@@ -611,7 +611,7 @@ export default function AcademicAdvisorGroupsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <GraduationCap className="h-8 w-8 text-green-500" />
@@ -630,7 +630,7 @@ export default function AcademicAdvisorGroupsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <UserPlus className="h-8 w-8 text-orange-500" />
@@ -646,7 +646,7 @@ export default function AcademicAdvisorGroupsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <AlertTriangle className="h-8 w-8 text-red-500" />
@@ -675,7 +675,7 @@ export default function AcademicAdvisorGroupsPage() {
               placeholder="Поиск групп..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="pl-10 pr-4 py-2 w-full border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
         </div>
@@ -691,7 +691,7 @@ export default function AcademicAdvisorGroupsPage() {
 
       {/* Предупреждение о неназначенных студентах */}
       {unassignedStudents.length > 0 && (
-        <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div className="mb-6 bg-yellow-50 border-[#6699FF] border-yellow-200 rounded-lg p-4">
           <div className="flex items-center">
             <AlertTriangle className="h-5 w-5 text-yellow-600 mr-3" />
             <div>
@@ -715,7 +715,7 @@ export default function AcademicAdvisorGroupsPage() {
             return (
               <div
                 key={group.$id}
-                className="bg-white rounded-lg shadow border"
+                className="bg-white rounded-lg shadow border-[#6699FF]"
               >
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
@@ -801,7 +801,7 @@ export default function AcademicAdvisorGroupsPage() {
           })}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow border">
+        <div className="text-center py-12 bg-white rounded-lg shadow border-[#6699FF]">
           <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             {searchTerm ? "Группы не найдены" : "Нет групп"}
@@ -824,7 +824,7 @@ export default function AcademicAdvisorGroupsPage() {
 
       {/* Модальное окно создания группы */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
             <form onSubmit={handleCreateSubmit}>
               <div className="p-6">
@@ -840,7 +840,7 @@ export default function AcademicAdvisorGroupsPage() {
                     type="text"
                     name="title"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="Например: ИТ-21-1"
                   />
                 </div>
@@ -892,7 +892,7 @@ export default function AcademicAdvisorGroupsPage() {
                     name="title"
                     required
                     defaultValue={selectedGroup.title}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   />
                 </div>
               </div>

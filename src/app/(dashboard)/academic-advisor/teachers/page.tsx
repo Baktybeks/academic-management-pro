@@ -140,7 +140,7 @@ export default function AcademicCouncilTeachersPage() {
 
       {/* Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Users className="h-8 w-8 text-blue-500" />
@@ -156,7 +156,7 @@ export default function AcademicCouncilTeachersPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <UserCheck className="h-8 w-8 text-green-500" />
@@ -170,7 +170,7 @@ export default function AcademicCouncilTeachersPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <UserX className="h-8 w-8 text-red-500" />
@@ -204,7 +204,7 @@ export default function AcademicCouncilTeachersPage() {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="px-4 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="all">Все</option>
             <option value="active">Активные</option>
@@ -223,7 +223,7 @@ export default function AcademicCouncilTeachersPage() {
 
       {/* Список преподавателей */}
       {filteredTeachers.length > 0 ? (
-        <div className="bg-white rounded-lg shadow border">
+        <div className="bg-white rounded-lg shadow border-[#6699FF]">
           <div className="divide-y divide-gray-200">
             {filteredTeachers.map((teacher) => (
               <div key={teacher.$id} className="p-6">
@@ -296,7 +296,7 @@ export default function AcademicCouncilTeachersPage() {
           </div>
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow border">
+        <div className="text-center py-12 bg-white rounded-lg shadow border-[#6699FF]">
           <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             {searchTerm || filterStatus !== "all"
@@ -321,7 +321,7 @@ export default function AcademicCouncilTeachersPage() {
 
       {/* Модальное окно создания преподавателя */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+       <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
             <form onSubmit={handleCreateSubmit}>
               <div className="p-6">
@@ -337,7 +337,7 @@ export default function AcademicCouncilTeachersPage() {
                     type="text"
                     name="name"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="Введите полное имя"
                   />
                 </div>
@@ -350,7 +350,7 @@ export default function AcademicCouncilTeachersPage() {
                     type="email"
                     name="email"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="Введите email"
                   />
                 </div>
@@ -364,7 +364,7 @@ export default function AcademicCouncilTeachersPage() {
                     name="password"
                     required
                     minLength={6}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="Введите пароль (минимум 6 символов)"
                   />
                 </div>

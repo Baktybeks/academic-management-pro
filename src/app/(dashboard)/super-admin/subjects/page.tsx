@@ -200,7 +200,7 @@ export default function SubjectsManagementPage() {
 
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#0055FF] text-white rounded-md hover:bg-[#0044CC] transition-colors"
           >
             <Plus className="h-4 w-4" />
             Создать дисциплину
@@ -213,7 +213,7 @@ export default function SubjectsManagementPage() {
         {filteredSubjects.map((subject) => (
           <div
             key={subject.$id}
-            className="bg-white border rounded-lg shadow-sm"
+            className="bg-white border-[6699FF] rounded-lg shadow-sm"
           >
             <div className="p-6">
               <div className="flex items-start justify-between mb-4">
@@ -303,7 +303,7 @@ export default function SubjectsManagementPage() {
           {!searchTerm && filterActive === null && (
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#0055FF] text-white rounded-md hover:bg-[#0044CC] transition-colors"
             >
               Создать первую дисциплину
             </button>
@@ -313,7 +313,7 @@ export default function SubjectsManagementPage() {
 
       {/* Модальное окно создания */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
             <form onSubmit={handleCreateSubmit}>
               <div className="p-6">
@@ -358,7 +358,7 @@ export default function SubjectsManagementPage() {
                 <button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                 className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#0055FF] text-white rounded-md hover:bg-[#0044CC] transition-colors"
                 >
                   {createMutation.isPending ? "Создание..." : "Создать"}
                 </button>

@@ -127,7 +127,7 @@ export default function SuperAdminGroupsPage() {
 
       {/* Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Users className="h-8 w-8 text-blue-500" />
@@ -141,7 +141,7 @@ export default function SuperAdminGroupsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <GraduationCap className="h-8 w-8 text-green-500" />
@@ -160,7 +160,7 @@ export default function SuperAdminGroupsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Users className="h-8 w-8 text-orange-500" />
@@ -197,7 +197,7 @@ export default function SuperAdminGroupsPage() {
 
         <button
           onClick={() => setIsCreateModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+        className="flex items-center gap-2 px-4 py-2  bg-[#0055FF] text-white rounded-md hover:bg-[#0044CC] transition-colors"
         >
           <Plus className="h-4 w-4" />
           Создать группу
@@ -210,7 +210,7 @@ export default function SuperAdminGroupsPage() {
           {filteredGroups.map((group) => (
             <div
               key={group.$id}
-              className="bg-white border rounded-lg shadow-sm"
+              className="bg-white border-[6699FF] rounded-lg shadow-sm"
             >
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
@@ -261,7 +261,7 @@ export default function SuperAdminGroupsPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow border">
+        <div className="text-center py-12 bg-white rounded-lg shadow border-[6699FF]">
           <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-500 text-lg">
             {searchTerm
@@ -269,19 +269,21 @@ export default function SuperAdminGroupsPage() {
               : "Группы пока не созданы"}
           </p>
           {!searchTerm && (
-            <button
-              onClick={() => setIsCreateModalOpen(true)}
-              className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-            >
-              Создать первую группу
-            </button>
+            <div className="flex justify-center mt-4"> {/* Добавлен этот div */}
+              <button
+                onClick={() => setIsCreateModalOpen(true)}
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-[#0055FF] text-white rounded-md hover:bg-[#0044CC] transition-colors"
+              >
+                Создать первую группу
+              </button>
+            </div>
           )}
         </div>
       )}
 
       {/* Модальное окно создания */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
             <form onSubmit={handleCreateSubmit}>
               <div className="p-6">
@@ -322,7 +324,7 @@ export default function SuperAdminGroupsPage() {
                 <button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#0055FF] text-white rounded-md hover:bg-[#0044CC] transition-colors"
                 >
                   {createMutation.isPending ? "Создание..." : "Создать"}
                 </button>
@@ -367,7 +369,7 @@ export default function SuperAdminGroupsPage() {
                 <button
                   type="submit"
                   disabled={updateMutation.isPending}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                 className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#0055FF] text-white rounded-md hover:bg-[#0044CC] transition-colors"
                 >
                   {updateMutation.isPending ? "Сохранение..." : "Сохранить"}
                 </button>

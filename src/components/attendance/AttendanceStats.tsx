@@ -42,7 +42,7 @@ export function AttendanceStatsComponent({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-6">
-      <div className="bg-white p-6 rounded-lg shadow border">
+      <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
         <div className="flex items-center">
           <div className="flex-shrink-0">
             <Users className="h-8 w-8 text-blue-500" />
@@ -57,7 +57,7 @@ export function AttendanceStatsComponent({
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow border">
+      <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
         <div className="flex items-center">
           <div className="flex-shrink-0">
             <Target className="h-8 w-8 text-purple-500" />
@@ -80,7 +80,7 @@ export function AttendanceStatsComponent({
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow border">
+      <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
         <div className="flex items-center">
           <div className="flex-shrink-0">
             <TrendingUp className="h-8 w-8 text-green-500" />
@@ -97,7 +97,7 @@ export function AttendanceStatsComponent({
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow border">
+      <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
         <div className="flex items-center">
           <div className="flex-shrink-0">
             <BookOpen className="h-8 w-8 text-yellow-500" />
@@ -114,7 +114,7 @@ export function AttendanceStatsComponent({
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow border">
+      <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
         <div className="flex items-center">
           <div className="flex-shrink-0">
             <TrendingDown className="h-8 w-8 text-red-500" />
@@ -131,7 +131,7 @@ export function AttendanceStatsComponent({
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow border">
+      <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
         <div className="flex items-center">
           <div className="flex-shrink-0">
             <Calendar className="h-8 w-8 text-indigo-500" />

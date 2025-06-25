@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { UserRole } from "@/types";
 import Layout from "@/components/common/Layout";
+const img = require('../../../../public/auth-bg.png').default;
 import { toast } from "react-toastify";
 import { CheckCircle, Clock, AlertTriangle, Info } from "lucide-react";
 
@@ -135,8 +136,42 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+     <div className="min-h-screen flex">
+       <div className="bg-[#0055FF33] flex-1 relative hidden md:block">
+       <div 
+          className="fixed z-0"
+          style={{
+          width: '1024px',
+          height: '955px',
+          top: '0',
+          left: '0'
+          }}
+      >
+         <img 
+            src={img.src} 
+            alt="Фон авторизации"
+            className="w-full h-full object-cover"
+        />
+</div>
+      
+      </div>
+      <div className="flex-1 flex items-center justify-center bg-gray-50 p-4 relative">
+       <div 
+          className="fixed z-0"
+          style={{
+          width: '740px',
+          height: '810px',
+          top: '-145px',
+          right: '-85px'
+          }}
+      >
+         <img 
+            src={img.src} 
+            alt="Фон авторизации"
+            className="w-full h-full object-cover"
+        />
+</div>
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md relative z-1">
         <div className="text-center">
           <h1 className="text-3xl font-extrabold text-gray-900">
             Вход в систему
@@ -219,7 +254,7 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#0055FF] border-[#6699FF] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed"
             >
               {loading ? "Вход..." : "Войти"}
             </button>
@@ -241,6 +276,7 @@ function LoginForm() {
             </p>
           </div>
         </form>
+      </div>
       </div>
     </div>
   );

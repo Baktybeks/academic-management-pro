@@ -226,7 +226,7 @@ export default function TeacherAssignmentsPage() {
           <Link
             href="/teacher/assignments/create"
             className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-          >
+          style={{color: '#fff'}}>
             <Plus className="h-4 w-4" />
             Создать задание
           </Link>
@@ -235,7 +235,7 @@ export default function TeacherAssignmentsPage() {
 
       {/* Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <FileText className="h-8 w-8 text-blue-500" />
@@ -249,7 +249,7 @@ export default function TeacherAssignmentsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <CheckCircle className="h-8 w-8 text-green-500" />
@@ -266,7 +266,7 @@ export default function TeacherAssignmentsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <AlertCircle className="h-8 w-8 text-red-500" />
@@ -283,7 +283,7 @@ export default function TeacherAssignmentsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <BarChart3 className="h-8 w-8 text-purple-500" />
@@ -302,7 +302,7 @@ export default function TeacherAssignmentsPage() {
       </div>
 
       {/* Фильтры и поиск */}
-      <div className="mb-6 bg-white p-4 rounded-lg shadow border">
+      <div className="mb-6 bg-white p-4 rounded-lg shadow border-[6699FF]">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -375,7 +375,7 @@ export default function TeacherAssignmentsPage() {
             return (
               <div
                 key={assignment.$id}
-                className="bg-white border rounded-lg shadow-sm"
+                className="bg-white border-[6699FF] rounded-lg shadow-sm"
               >
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
@@ -475,7 +475,7 @@ export default function TeacherAssignmentsPage() {
           })}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow border">
+        <div className="text-center py-12 bg-white rounded-lg shadow border-[6699FF]">
           <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             {searchTerm || filterSubject !== "all" || filterStatus !== "all"
@@ -491,7 +491,7 @@ export default function TeacherAssignmentsPage() {
             <Link
               href="/teacher/assignments/create"
               className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-            >
+             style={{color: '#fff'}}>
               Создать задание
             </Link>
           )}

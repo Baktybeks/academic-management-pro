@@ -196,7 +196,7 @@ export default function AcademicAdvisorAttendancePage() {
 
       {/* Предупреждения и рекомендации */}
       {stats && stats.poorAttendance > 0 && (
-        <div className="mt-6 bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="mt-6 bg-red-50 border-[#6699FF] border-red-200 rounded-lg p-4">
           <div className="flex items-center">
             <AlertTriangle className="h-5 w-5 text-red-600 mr-3" />
             <div>
@@ -214,7 +214,7 @@ export default function AcademicAdvisorAttendancePage() {
 
       {/* Информация при отсутствии данных */}
       {attendanceRecords.length === 0 && (
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="mt-6 bg-blue-50 border-[#6699FF] border-blue-200 rounded-lg p-4">
           <div className="flex items-center">
             <CheckCircle className="h-5 w-5 text-blue-600 mr-3" />
             <div>
@@ -232,7 +232,7 @@ export default function AcademicAdvisorAttendancePage() {
       )}
 
       {/* Рекомендации по улучшению */}
-      <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div className="mt-6 bg-blue-50 border-[#6699FF] border-blue-200 rounded-lg p-4">
         <h3 className="text-sm font-medium text-blue-800 mb-2">
           Рекомендации по улучшению посещаемости
         </h3>
@@ -262,7 +262,7 @@ export default function AcademicAdvisorAttendancePage() {
 
       {/* Успешная статистика */}
       {stats && stats.averageAttendance >= 85 && (
-        <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="mt-6 bg-green-50 border-[#6699FF] border-green-200 rounded-lg p-4">
           <div className="flex items-center">
             <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
             <div>

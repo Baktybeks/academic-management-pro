@@ -359,7 +359,7 @@ export default function AcademicAdvisorGradesPage() {
 
       {/* Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow  border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Users className="h-8 w-8 text-blue-500" />
@@ -378,7 +378,7 @@ export default function AcademicAdvisorGradesPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow  border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Target className="h-8 w-8 text-green-500" />
@@ -396,7 +396,7 @@ export default function AcademicAdvisorGradesPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow  border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Award className="h-8 w-8 text-yellow-500" />
@@ -418,7 +418,7 @@ export default function AcademicAdvisorGradesPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow  border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <BarChart3 className="h-8 w-8 text-purple-500" />
@@ -444,7 +444,7 @@ export default function AcademicAdvisorGradesPage() {
       </div>
 
       {/* Фильтры */}
-      <div className="mb-6 bg-white p-4 rounded-lg shadow border">
+      <div className="mb-6 bg-white p-4 rounded-lg shadow  border-[#6699FF]">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -453,7 +453,7 @@ export default function AcademicAdvisorGradesPage() {
             <select
               value={viewMode}
               onChange={(e) => setViewMode(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2  border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="overview">Обзор</option>
               <option value="detailed">Детально</option>
@@ -468,7 +468,7 @@ export default function AcademicAdvisorGradesPage() {
             <select
               value={selectedGroup}
               onChange={(e) => setSelectedGroup(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2  border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="all">Все группы</option>
               {groups.map((group) => (
@@ -486,7 +486,7 @@ export default function AcademicAdvisorGradesPage() {
             <select
               value={selectedSubject}
               onChange={(e) => setSelectedSubject(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2  border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="all">Все дисциплины</option>
               {subjects.map((subject) => (
@@ -504,7 +504,7 @@ export default function AcademicAdvisorGradesPage() {
             <select
               value={selectedTeacher}
               onChange={(e) => setSelectedTeacher(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2  border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="all">Все преподаватели</option>
               {teachers.map((teacher) => (
@@ -528,7 +528,7 @@ export default function AcademicAdvisorGradesPage() {
       </div>
 
       {/* Распределение оценок */}
-      <div className="mb-6 bg-white rounded-lg shadow border p-6">
+      <div className="mb-6 bg-white rounded-lg shadow  border-[#6699FF] p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Распределение оценок
         </h3>
@@ -595,7 +595,7 @@ export default function AcademicAdvisorGradesPage() {
 
       {/* Основной контент */}
       {viewMode === "overview" && (
-        <div className="bg-white rounded-lg shadow border">
+        <div className="bg-white rounded-lg shadow  border-[#6699FF]">
           <div className="p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Список оценок ({filteredGrades.length})
@@ -713,7 +713,7 @@ export default function AcademicAdvisorGradesPage() {
           {filteredGrades.map((grade, index) => (
             <div
               key={`${grade.studentId}-${grade.subjectId}-${grade.groupId}`}
-              className="bg-white rounded-lg shadow border p-6"
+              className="bg-white rounded-lg shadow  border-[#6699FF] p-6"
             >
               <div className="flex items-center justify-between mb-4">
                 <div>
@@ -824,7 +824,7 @@ export default function AcademicAdvisorGradesPage() {
       {/* Аналитика */}
       {viewMode === "analytics" && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow border p-6">
+          <div className="bg-white rounded-lg shadow  border-[#6699FF] p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Статистика по группам
             </h3>
@@ -871,7 +871,7 @@ export default function AcademicAdvisorGradesPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow border p-6">
+          <div className="bg-white rounded-lg shadow  border-[#6699FF] p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Статистика по дисциплинам
             </h3>
@@ -918,7 +918,7 @@ export default function AcademicAdvisorGradesPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow border p-6">
+          <div className="bg-white rounded-lg shadow  border-[#6699FF] p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Статистика по преподавателям
             </h3>
@@ -965,7 +965,7 @@ export default function AcademicAdvisorGradesPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow border p-6">
+          <div className="bg-white rounded-lg shadow  border-[#6699FF] p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Общая статистика
             </h3>
@@ -1007,7 +1007,7 @@ export default function AcademicAdvisorGradesPage() {
 
       {/* Информационные блоки */}
       {stats.studentsWithGrades === 0 && (
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="mt-6 bg-blue-50  border-[#6699FF] border-blue-200 rounded-lg p-4">
           <div className="flex items-center">
             <AlertTriangle className="h-5 w-5 text-blue-600 mr-3" />
             <div>
@@ -1025,7 +1025,7 @@ export default function AcademicAdvisorGradesPage() {
       )}
 
       {stats.unsatisfactoryGrades > 0 && (
-        <div className="mt-6 bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="mt-6 bg-red-50  border-[#6699FF] border-red-200 rounded-lg p-4">
           <div className="flex items-center">
             <AlertTriangle className="h-5 w-5 text-red-600 mr-3" />
             <div>
@@ -1043,7 +1043,7 @@ export default function AcademicAdvisorGradesPage() {
       )}
 
       {stats.averageScore >= 85 && stats.studentsWithGrades > 0 && (
-        <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="mt-6 bg-green-50  border-[#6699FF] border-green-200 rounded-lg p-4">
           <div className="flex items-center">
             <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
             <div>

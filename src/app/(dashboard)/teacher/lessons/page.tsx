@@ -249,7 +249,7 @@ export default function TeacherLessonsPage() {
 
       {/* Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow  border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Calendar className="h-8 w-8 text-blue-500" />
@@ -263,7 +263,7 @@ export default function TeacherLessonsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow  border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <BookOpen className="h-8 w-8 text-green-500" />
@@ -277,7 +277,7 @@ export default function TeacherLessonsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow  border-[6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Users className="h-8 w-8 text-purple-500" />
@@ -293,7 +293,7 @@ export default function TeacherLessonsPage() {
       </div>
 
       {/* Фильтры и поиск */}
-      <div className="mb-6 bg-white p-4 rounded-lg shadow border">
+      <div className="mb-6 bg-white p-4 rounded-lg shadow  border-[6699FF]">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -431,7 +431,7 @@ export default function TeacherLessonsPage() {
           })}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow border">
+        <div className="text-center py-12 bg-white rounded-lg shadow  border-[6699FF]">
           <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             {searchTerm || filterSubject !== "all"
@@ -456,7 +456,7 @@ export default function TeacherLessonsPage() {
 
       {/* Модальное окно создания занятия */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
             <form onSubmit={handleCreateSubmit}>
               <div className="p-6">

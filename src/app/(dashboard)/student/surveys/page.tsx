@@ -247,7 +247,7 @@ function SurveyPeriodsList({
 }) {
   if (periods.length === 0) {
     return (
-      <div className="text-center py-12 bg-white rounded-lg shadow border">
+      <div className="text-center py-12 bg-white rounded-lg shadow border-[6699FF]">
         <ClipboardList className="h-12 w-12 text-gray-400 mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
           Нет активных опросов

@@ -242,7 +242,7 @@ export default function StudentGradesPage() {
 
       {/* Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-        <div className="bg-white p-4 rounded-lg shadow border">
+        <div className="bg-white p-4 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <FileText className="h-6 w-6 text-blue-500 mr-3" />
             <div>
@@ -254,7 +254,7 @@ export default function StudentGradesPage() {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow border">
+        <div className="bg-white p-4 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <Star className="h-6 w-6 text-green-500 mr-3" />
             <div>
@@ -266,7 +266,7 @@ export default function StudentGradesPage() {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow border">
+        <div className="bg-white p-4 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <BarChart3 className="h-6 w-6 text-indigo-500 mr-3" />
             <div>
@@ -278,7 +278,7 @@ export default function StudentGradesPage() {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow border">
+        <div className="bg-white p-4 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <TrendingUp className="h-6 w-6 text-green-500 mr-3" />
             <div>
@@ -290,7 +290,7 @@ export default function StudentGradesPage() {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow border">
+        <div className="bg-white p-4 rounded-lg shadow border-[6699FF]">
           <div className="flex items-center">
             <Award className="h-6 w-6 text-purple-500 mr-3" />
             <div>
@@ -304,7 +304,7 @@ export default function StudentGradesPage() {
       </div>
 
       {/* Фильтры */}
-      <div className="mb-6 bg-white p-4 rounded-lg shadow border">
+      <div className="mb-6 bg-white p-4 rounded-lg shadow border-[6699FF]">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -418,7 +418,7 @@ export default function StudentGradesPage() {
         <h2 className="text-xl font-bold text-gray-900 mb-4">Все оценки</h2>
 
         {filteredSubmissions.length > 0 ? (
-          <div className="bg-white rounded-lg shadow border">
+          <div className="bg-white rounded-lg shadow border-[6699FF]">
             <div className="divide-y divide-gray-200">
               {filteredSubmissions
                 .sort(
@@ -478,7 +478,7 @@ export default function StudentGradesPage() {
                         </div>
 
                         <div
-                          className={`px-4 py-2 rounded-lg border ${getGradeColor(
+                          className={`px-4 py-2 rounded-lg border-[6699FF] ${getGradeColor(
                             submission.score!,
                             assignment.maxScore
                           )}`}
@@ -502,7 +502,7 @@ export default function StudentGradesPage() {
             </div>
           </div>
         ) : (
-          <div className="text-center py-12 bg-white rounded-lg shadow border">
+          <div className="text-center py-12 bg-white rounded-lg shadow border-[6699FF]">
             <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               Оценок не найдено

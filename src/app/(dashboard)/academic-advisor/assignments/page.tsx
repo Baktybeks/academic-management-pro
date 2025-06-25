@@ -223,7 +223,7 @@ export default function AcademicCouncilAssignmentsPage() {
 
       {/* Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <LinkIcon className="h-8 w-8 text-blue-500" />
@@ -239,7 +239,7 @@ export default function AcademicCouncilAssignmentsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <UserIcon className="h-8 w-8 text-green-500" />
@@ -255,7 +255,7 @@ export default function AcademicCouncilAssignmentsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <BookOpen className="h-8 w-8 text-purple-500" />
@@ -271,7 +271,7 @@ export default function AcademicCouncilAssignmentsPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="bg-white p-6 rounded-lg shadow border-[#6699FF]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Users className="h-8 w-8 text-orange-500" />
@@ -289,7 +289,7 @@ export default function AcademicCouncilAssignmentsPage() {
       </div>
 
       {/* Фильтры и поиск */}
-      <div className="mb-6 bg-white p-4 rounded-lg shadow border">
+      <div className="mb-6 bg-white p-4 rounded-lg shadow border-[#6699FF]">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -302,7 +302,7 @@ export default function AcademicCouncilAssignmentsPage() {
                 placeholder="Преподаватель, дисциплина, группа..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-3 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="pl-10 pr-3 py-2 w-full border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
           </div>
@@ -314,7 +314,7 @@ export default function AcademicCouncilAssignmentsPage() {
             <select
               value={filterTeacher}
               onChange={(e) => setFilterTeacher(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="all">Все преподаватели</option>
               {teachers.map((teacher) => (
@@ -332,7 +332,7 @@ export default function AcademicCouncilAssignmentsPage() {
             <select
               value={filterSubject}
               onChange={(e) => setFilterSubject(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="all">Все дисциплины</option>
               {subjects.map((subject) => (
@@ -362,7 +362,7 @@ export default function AcademicCouncilAssignmentsPage() {
             ({ teacher, assignments: teacherAssignments }) => (
               <div
                 key={teacher.$id}
-                className="bg-white rounded-lg shadow border"
+                className="bg-white rounded-lg shadow border-[#6699FF]"
               >
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
@@ -385,7 +385,7 @@ export default function AcademicCouncilAssignmentsPage() {
                       ({ assignment, subject, group }) => (
                         <div
                           key={assignment.$id}
-                          className="border rounded-lg p-4"
+                          className="border-2 border-solid border-[#9cbdd3] rounded-lg p-4"
                         >
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
@@ -428,7 +428,7 @@ export default function AcademicCouncilAssignmentsPage() {
           )}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow border">
+        <div className="text-center py-12 bg-white rounded-lg shadow border-[#6699FF]">
           <LinkIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             {searchTerm || filterTeacher !== "all" || filterSubject !== "all"
@@ -471,7 +471,7 @@ export default function AcademicCouncilAssignmentsPage() {
                     <select
                       name="teacherId"
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     >
                       <option value="">Выберите преподавателя</option>
                       {teachers.map((teacher) => (
@@ -489,7 +489,7 @@ export default function AcademicCouncilAssignmentsPage() {
                     <select
                       name="subjectId"
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     >
                       <option value="">Выберите дисциплину</option>
                       {subjects
@@ -509,7 +509,7 @@ export default function AcademicCouncilAssignmentsPage() {
                     <select
                       name="groupId"
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border-[#6699FF] border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     >
                       <option value="">Выберите группу</option>
                       {groups.map((group) => (
