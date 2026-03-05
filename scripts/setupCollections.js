@@ -1,4 +1,3 @@
-// scripts/setupCollections.js
 const { Client, Databases, Permission, Role } = require("node-appwrite");
 require("dotenv").config({ path: ".env.local" });
 
