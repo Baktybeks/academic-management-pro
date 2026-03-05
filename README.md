@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Academic Management Pro
 
-## Getting Started
+Веб-приложение для управления учебным процессом: пользователи, группы, предметы, занятия, посещаемость, задания, оценки и опросы.
 
-First, run the development server:
+## Стек
+
+- **Next.js 15** (App Router)
+- **Appwrite** — база данных и аутентификация
+- **React Query** — кэш и запросы
+- **Zustand** — состояние авторизации
+- **Tailwind CSS** — стили
+- **TypeScript**
+
+## Роли
+
+- **Супер-админ** — настройка системы (пользователи, предметы, группы, периоды оценок, опросы, отчёты)
+- **Академический советник** — студенты, группы, преподаватели, посещаемость, задания, оценки, отчёты, опросы
+- **Преподаватель** — занятия, посещаемость, задания, сдачи, оценки
+- **Студент** — задания, сдача работ, оценки, посещаемость, опросы
+
+## Быстрый старт
 
 ```bash
+npm install
+cp .env.example .env.local
+# Заполните .env.local (Appwrite endpoint, projectId, databaseId, ID коллекций, при необходимости APPWRITE_API_KEY)
+npm run db:setup   # создание коллекций в Appwrite
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Откройте [http://localhost:3000](http://localhost:3000). Первый зарегистрированный пользователь станет супер-админом.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Документация
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Вся документация находится в папке **[docs/](./docs/)**:
 
-## Learn More
+| Документ | Описание |
+|----------|----------|
+| [docs/README.md](./docs/README.md) | Оглавление документации |
+| [docs/SETUP.md](./docs/SETUP.md) | Установка и настройка |
+| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Архитектура проекта |
+| [docs/USER_ROLES.md](./docs/USER_ROLES.md) | Роли и маршруты |
+| [docs/DATABASE.md](./docs/DATABASE.md) | Схема БД Appwrite |
+| [docs/API_AND_SERVICES.md](./docs/API_AND_SERVICES.md) | Сервисы и API |
 
-To learn more about Next.js, take a look at the following resources:
+## Команды
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Команда | Описание |
+|---------|----------|
+| `npm run dev` | Режим разработки |
+| `npm run build` | Сборка |
+| `npm run start` | Запуск production |
+| `npm run lint` | Линтер |
+| `npm run db:test` | Проверка подключения к Appwrite |
+| `npm run db:setup` | Создание коллекций |
+| `npm run db:reset` | Удаление коллекций |
+| `npm run db:reset-setup` | Сброс и создание коллекций |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Лицензия
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Private.
